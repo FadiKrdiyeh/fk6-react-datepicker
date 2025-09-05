@@ -8,7 +8,7 @@ export default defineConfig({
         lib: {
             entry: "src/index.ts",
             name: "FKReactDatePicker",
-            fileName: (format) => `fk-react-datepicker.${format}.js`,
+            fileName: (format) => `index.${format}.js`,
         },
         rollupOptions: {
             external: ["react", "react-dom", "moment", "moment-hijri"],
