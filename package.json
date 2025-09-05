@@ -2,9 +2,10 @@
   "name": "@fk6/react-datepicker",
   "version": "1.0.2",
   "description": "A React datetime picker supporting Gregorian and Hijri calendars using moment and moment-hijri (NOT READY YET!)",
-  "main": "dist/react-datepicker.umd.js",
-  "module": "dist/react-datepicker.es.js",
+  
+  "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "module": "dist/index.es.js",
   "files": [
     "dist"
   ],
