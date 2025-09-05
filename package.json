@@ -1,17 +1,25 @@
 {
-  "name": "@fk/react-datepicker",
+  "name": "@fk6/react-datepicker",
   "version": "1.0.0",
   "description": "A React datetime picker supporting Gregorian and Hijri calendars using moment and moment-hijri",
   "main": "dist/react-datepicker.umd.js",
   "module": "dist/react-datepicker.es.js",
   "types": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "vite build"
   },
-  "keywords": ["react", "datepicker", "moment", "moment-hijri", "hijri"],
+  "keywords": [
+    "react",
+    "datepicker",
+    "moment",
+    "moment-hijri",
+    "hijri"
+  ],
   "author": "Fadi Krdiyeh",
   "license": "MIT",
   "dependencies": {
@@ -34,5 +42,13 @@
     "react-dom": ">=18",
     "moment": ">=2",
     "moment-hijri": ">=2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FadiKrdiyeh/fk6-react-datepicker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/FadiKrdiyeh/fk6-react-datepicker/issues"
+  },
+  "homepage": "https://github.com/FadiKrdiyeh/fk6-react-datepicker#readme"
 }
