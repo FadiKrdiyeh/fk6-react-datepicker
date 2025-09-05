@@ -1,0 +1,38 @@
+{
+  "name": "@fk/react-datepicker",
+  "version": "1.0.0",
+  "description": "A React datetime picker supporting Gregorian and Hijri calendars using moment and moment-hijri",
+  "main": "dist/react-datepicker.umd.js",
+  "module": "dist/react-datepicker.es.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "vite build"
+  },
+  "keywords": ["react", "datepicker", "moment", "moment-hijri", "hijri"],
+  "author": "Fadi Krdiyeh",
+  "license": "MIT",
+  "dependencies": {
+    "moment": "^2.30.1",
+    "moment-hijri": "^3.0.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@types/moment-hijri": "^2.1.4",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react": "^5.0.2",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.4",
+    "vite-plugin-dts": "^4.5.4"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18",
+    "moment": ">=2",
+    "moment-hijri": ">=2"
+  }
+}
