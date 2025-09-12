@@ -8,8 +8,8 @@
   "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/react-datepicker.es.js",
-      "require": "./dist/react-datepicker.umd.js"
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.umd.js"
     },
     "./react-datepicker.css": "./dist/react-datepicker.css"
   },
