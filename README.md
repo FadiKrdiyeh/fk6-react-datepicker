@@ -93,7 +93,7 @@ Make sure these are installed in your project.
 ```tsx
 import React, { useState } from "react";
 import { DatePicker } from "react-date-picker";
-import "react-date-picker/dist/react-datepicker.css";
+import "@fk6/react-datepicker/react-datepicker.css";
 
 export default function App() {
   const [date, setDate] = useState<Date | Moment | null>(null);
@@ -145,9 +145,9 @@ export default function App() {
 
 ```ts
 import { useState } from "react";
-import { DatePicker } from "@fk/react-datepicker";
+import { DatePicker } from "@fk6/react-datepicker";
 
-import "@fk/react-datepicker/react-datepicker.css";
+import "@fk6/react-datepicker/react-datepicker.css";
 import "moment/locale/ar";
 
 moment.locale("ar");
