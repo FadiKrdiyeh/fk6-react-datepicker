@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import moment, { type Moment } from "moment";
+import moment, { type Moment } from "moment-hijri";
 // import 'moment/locale/en-gb'
 import "moment-hijri";
 

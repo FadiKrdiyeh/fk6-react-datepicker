@@ -1,0 +1,193 @@
+@use '../helpers/variables' as *;
+
+.fkdp-calendar {
+    * {
+        user-select: none;
+    }
+
+    background: var(--fkdp-calendar-bg);
+    color: var(--fkdp-text);
+    border-radius: 6px;
+    padding: 0.5rem;
+    position: absolute;
+    inset-inline-start: 0;
+    z-index: 1000;
+    margin-top: 0.25rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+        width: 100%;
+        padding-bottom: 10px;
+        border-bottom: var(--fkdp-secondary) 1px solid;
+    }
+
+    &__btn {
+        background: transparent;
+        border: none;
+        padding: 6px 10px;
+        border-radius: 50%;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        color: var(--fkdp-text);
+
+        // &:hover {
+        //     // background: #e0e0e0;
+        // }
+
+        &:active {
+            // background: #d0d0d0;
+            transform: scale(0.95);
+        }
+        &--disabled {
+            color: var(--fkdp-secondary);
+            cursor: not-allowed;
+        }
+    }
+
+    &__footer {
+        .fkdp-calendar__go-to-today {
+            margin-top: 5px;
+            background-color: var(--fkdp-calendar-bg);
+            color: var(--fkdp-text);
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            padding: 4px 5px;
+        }
+    }
+
+    &__woth-week-nums {
+        .fkdp-calendar__grid-months {
+            grid-template-columns: repeat(4, 4.15rem);
+        }
+
+        .fkdp-calendar__grid-years {
+            grid-template-columns: repeat(4, 4.15rem);
+        }
+    }
+
+    &__grid {
+        display: grid;
+        gap: 0.15rem;
+
+        &-days {
+            grid-template-columns: repeat(7, 2rem);
+
+            .fkdp-calendar__cell {
+                border-radius: 50%;
+            }
+        }
+
+        &-weekdays {
+            grid-template-columns: repeat(7, 2rem);
+
+            .fkdp-calendar__cell {
+                border-radius: 50%;
+            }
+        }
+
+        &-with-weeknum {
+            grid-template-columns: repeat(8, 2rem);
+        }
+
+        &-months {
+            grid-template-columns: repeat(4, 3.61rem);
+
+            .fkdp-calendar__cell {
+                border-radius: 10px !important;
+            }
+        }
+
+        &-years {
+            grid-template-columns: repeat(4, 3.61rem);
+
+            .fkdp-calendar__cell {
+                border-radius: 10px !important;
+            }
+        }
+    }
+
+    &__cell {
+        min-width: 2rem;
+        min-height: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border-radius: 4px;
+        background: none;
+        border: none;
+        position: relative;
+        color: var(--fkdp-text);
+
+        &--weekday {
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+            color: #666;
+            padding: 4px 0;
+            cursor: default;
+        }
+
+        &--weeknum {
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+            color: #666;
+            cursor: default;
+
+            &::after {
+                content: '|';
+                position: absolute;
+                inset-inline-end: 0;
+                margin-bottom: 3px;
+            }
+        }
+
+        &--today {
+            border: 1px solid var(--fkdp-primary);
+            font-weight: bold;
+        }
+
+        &--focused {
+            outline: 2px solid var(--fkdp-primary);
+        }
+
+        &--holiday {
+            background-color: var(--fkdp-calendar-holiday-bg);
+        }
+
+        &--highlighted {
+            background: var(--fkdp-calendar-highlighted-bg);
+        }
+
+        &--outside {
+            opacity: 0.6;
+            cursor: default;
+
+            &:is(button) {
+                cursor: pointer;
+            }
+        }
+
+        &--selected {
+            background: var(--fkdp-primary);
+            color: var(--fkdp-light-text);
+        }
+
+        &--disabled {
+            cursor: not-allowed;
+            opacity: 0.4;
+        }
+    }
+}

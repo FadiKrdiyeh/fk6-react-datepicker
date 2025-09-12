@@ -1,0 +1,53 @@
+// Sass variables (can be overridden by Sass users)
+$fkdp-primary: #007bff;
+$fkdp-secondary: #977e7e;
+$fkdp-highlight: #ff7aa0cd;
+$fkdp-text: #000;
+$fkdp-light-text: #fff;
+
+// --------------------
+// DateField variables
+// --------------------
+$fkdp-field-bg: #fff !default;
+$fkdp-field-color: #333 !default;
+
+// --------------------
+// Calendar variables
+// --------------------
+$fkdp-calendar-bg: #fff !default;
+$fkdp-calendar-highlighted-bg: $fkdp-highlight !default;
+$fkdp-calendar-holiday-bg: $fkdp-secondary !default;
+
+// Define CSS variables (for non-Sass users)
+:root {
+    --fkdp-primary: #{$fkdp-primary};
+    --fkdp-secondary: #{$fkdp-secondary};
+    --fkdp-text: #{$fkdp-text};
+    --fkdp-light-text: #{$fkdp-light-text};
+
+    // DateField
+    --fkdp-field-bg: #{$fkdp-field-bg};
+    --fkdp-field-color: #{$fkdp-field-color};
+
+    // Calendar
+    --fkdp-calendar-bg: #{$fkdp-calendar-bg};
+    --fkdp-calendar-highlighted-bg: #{$fkdp-calendar-highlighted-bg};
+    --fkdp-calendar-holiday-bg: #{$fkdp-calendar-holiday-bg};
+
+    .fkdp-datepicker__dark,
+    .fkdp-calendar__dark {
+        --fkdp-primary: #{$fkdp-primary};
+        --fkdp-secondary: #{$fkdp-secondary};
+        --fkdp-text: #{$fkdp-light-text};
+        --fkdp-light-text: #{$fkdp-text};
+
+        // DateField
+        --fkdp-field-bg: #4a4a4a;
+        --fkdp-field-color: #eee;
+
+        // Calendar
+        --fkdp-calendar-bg: #282828;
+        --fkdp-calendar-highlighted-bg: #ff1a5b8a;
+        --fkdp-calendar-holiday-bg: #848484;
+    }
+}

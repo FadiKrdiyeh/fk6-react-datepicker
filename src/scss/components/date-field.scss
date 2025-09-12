@@ -1,0 +1,43 @@
+@use '../helpers/variables' as *;
+
+.fkdp-field {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+
+    &__input {
+        flex: 1;
+        padding: 0.5rem 2rem 0.5rem 0.5rem;
+        border: 1px solid var(--fkdp-secondary);
+        border-radius: 6px;
+        background-color: var(--fkdp-field-bg);
+        color: var(--fkdp-field-color);
+        font-size: 14px;
+
+        &:disabled {
+            background: #f5f5f5;
+            cursor: not-allowed;
+        }
+    }
+
+    &__clear,
+    &__icon {
+        position: absolute;
+        // right: 0.5rem;
+        inset-inline-end: 0.5rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        color: var(--fkdp-field-color);
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    }
+
+    &__clear {
+        inset-inline-end: 2rem;
+    }
+}
