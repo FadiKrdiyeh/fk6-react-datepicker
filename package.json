@@ -57,7 +57,7 @@
   },
   "peerDependencies": {
     "moment": "^2.0.0",
-    "moment-hijri": "^2.0.0",
+    "moment-hijri": "^3.0.0",
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0"
   },
