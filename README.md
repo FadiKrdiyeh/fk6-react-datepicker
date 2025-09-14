@@ -143,7 +143,9 @@ export default function App() {
 
 ### Localization
 
-```ts
+This example sets the Moment.js locale to Arabic ("ar") and renders a DatePicker with Arabic localization. It ensures that date formats, calendar labels, and UI elements appear in Arabic, providing a fully localized experience for Arabic-speaking users.
+
+```tsx
 import { useState } from "react";
 import { DatePicker } from "@fk6/react-datepicker";
 
@@ -155,6 +157,25 @@ moment.locale("ar");
 const Example = () => {
   return <DatePicker locale="ar" />;
 };
+```
+
+### Render Custom Field
+
+Render your own **Custom Input**:
+
+This `DatePicker` allow you to render your own custom input component (`MyCustomInput`) to render the date field. The `ref` connects the input to the calendar popover, while `onOpenRequest` enables the calendar to open on click—providing seamless integration between the input field and date selection UI.
+
+```tsx
+<DatePicker
+  renderInput={(inputProps) => (
+    <MyCustomInput
+      ref={inputProps.ref}
+      value={inputProps.value || ""}
+      onChange={inputProps.onChange}
+      onClick={inputProps.onOpenRequest}
+    />
+  )}
+/>
 ```
 
 ---
@@ -237,8 +258,8 @@ You can override CSS variables in your styles:
 | `calendar`            | `gregorian` \| `hijri`                                                                                                                                                                     | `"gregorian"`  | Specifies the calendar system used for date calculations and display.                             |
 | `onClose`             | `() => void`                                                                                                                                                                               | —              | Callback invoked when the calendar is closed (e.g., clicking outside or selecting a date).        |
 | `daysCalendarProps`   | [`DaysCalendarProps`](#days-calendar-props)                                                                                                                                                | —              | An object containing props that customize the rendering and behavior of the days calendar view.   |
-| `monthsCalendarProps` | [`MonthsCalendarProps`](#months-calendar-props)                                                                                                                                              | —              | An object containing props that customize the rendering and behavior of the months calendar view. |
-| `yearsCalendarProps`  | [`YearsCalendarProps`](#years-calendar-props)                                                                                                                                               | —              | An object containing props that customize the rendering and behavior of the years calendar view.  |
+| `monthsCalendarProps` | [`MonthsCalendarProps`](#months-calendar-props)                                                                                                                                            | —              | An object containing props that customize the rendering and behavior of the months calendar view. |
+| `yearsCalendarProps`  | [`YearsCalendarProps`](#years-calendar-props)                                                                                                                                              | —              | An object containing props that customize the rendering and behavior of the years calendar view.  |
 
 ---
 
@@ -311,17 +332,18 @@ I welcome contributions to make this datepicker even better! Whether you're fixi
 1. Fork the repository
 2. Create a new branch
 
-```  git checkout -b feature/your-feature-name ```
+` git checkout -b feature/your-feature-name`
 
 3. Make your changes
 4. Test your code
 5. - Submit a pull request with a clear description of your changes
 
 ### Guidelines
-* Follow the existing code style and structure
-* Write clear, concise commit messages
-* Include relevant tests for new features or bug fixes
-* Keep PRs focused—one feature or fix per PR
+
+- Follow the existing code style and structure
+- Write clear, concise commit messages
+- Include relevant tests for new features or bug fixes
+- Keep PRs focused—one feature or fix per PR
 
 If you're unsure where to start, check out the [issues](https://github.com/FadiKrdiyeh/fk6-react-datepicker/issues) tab for open tasks or feature requests.
 
