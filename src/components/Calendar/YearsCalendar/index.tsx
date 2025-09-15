@@ -1,4 +1,4 @@
-import { type Moment } from 'moment-hijri';
+import moment, { type Moment } from 'moment-hijri';
 import { useMemo, type FC, type ReactNode } from 'react';
 
 import { getLocalizedMomentDate } from '../../../utils/dateHelpers.js';
@@ -69,7 +69,14 @@ export const YearsCalendar: FC<AllYearsCalendarProps> = ({
 
     const handleYearClick = (date: Moment) => {
         if (isDateDisabled(date)) return;
-        onSelect?.(date.toDate());
+
+        // [TODO] Need review...
+        if (date.isBetween(minDate, maxDate, undefined, '[]'))
+            onSelect?.(date.toDate());
+        else if (date.isBefore(minDate))
+            onSelect?.(moment(minDate).toDate());
+        else
+            onSelect?.(moment(maxDate).toDate());
     };
 
     const renderCell = (year: Moment) => {

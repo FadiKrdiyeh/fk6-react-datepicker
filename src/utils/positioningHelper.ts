@@ -17,7 +17,7 @@ export const computeCoords = (anchorEl: HTMLElement, calendarEl: HTMLElement, di
 
     const calendarHeight = calendarEl?.clientHeight || 0;
     const calendarWidth = calendarEl?.clientWidth || 0;
-    const isRTL = (calendarEl.dir || document.dir) === "rtl";
+    const isRTL = (calendarEl.dir || document.dir || document.body.dir) === "rtl";
 
     const rect = anchorEl.getBoundingClientRect();
     const parentRect = anchorEl.parentElement?.getBoundingClientRect() ?? rect;

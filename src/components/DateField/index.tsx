@@ -1,5 +1,5 @@
 import moment, { type Moment } from 'moment-hijri';
-import React, { forwardRef, useEffect, useRef, useState, type ComponentProps, type MouseEvent, type ReactNode } from 'react';
+import React, { forwardRef, useEffect, useRef, useState, type ComponentProps, type MouseEvent, type ReactNode, type Ref } from 'react';
 
 import { getLocalizedMomentDate } from '../../utils/dateHelpers.js';
 import { GregorianFormatsEnum } from '../../utils/enums.js';
@@ -7,20 +7,29 @@ import { clsx } from '../../utils/stringHelpers.js';
 
 import '../../scss/components/date-field.scss';
 
-export interface DateFieldProps extends Omit<ComponentProps<'input'>, 'value' | 'onChange' | 'defaultValue'> {
+export interface DateFieldExtraProps {
+    ref?: Ref<any> | undefined;
     value?: Date | Moment | null;              // controlled value
     defaultValue?: Date | Moment | null;       // uncontrolled
     format?: string;
     clearable?: boolean;
     showIcon?: boolean;
     locale?: string | undefined;
+    disabled?: boolean;
+    readOnly?: boolean;
+    placeholder?: string | undefined;
     renderIcon?: () => ReactNode;
     onChange?: (date: Date | null) => void;
     onInputChange?: (raw: string) => void;
-    onOpenRequest?: (e?: HTMLElement | boolean | null) => void;       // e.g. when user clicks icon or presses key
+    onOpenRequest?: (e?: MouseEvent | HTMLElement | boolean | null) => void;       // e.g. when user clicks icon or presses key
 }
 
-export const DateField = forwardRef<HTMLInputElement, DateFieldProps>(({
+
+export interface DateFieldInputExtraProps extends Omit<ComponentProps<'input'>, 'value' | 'onChange' | 'defaultValue' | 'disabled' | 'readOnly' | 'placeholder' | 'ref'>, DateFieldExtraProps { }
+
+export type DateFieldProps = Omit<DateFieldInputExtraProps, "clearable" | "showIcon" | "renderIcon">
+
+export const DateField = forwardRef<HTMLInputElement, DateFieldInputExtraProps>(({
     value,
     defaultValue = null,
     format = GregorianFormatsEnum.Date,

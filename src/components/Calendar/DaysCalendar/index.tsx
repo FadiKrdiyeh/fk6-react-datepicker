@@ -108,7 +108,7 @@ export const DaysCalendar: FC<AllDaysCalendarProps> = ({
 
     const isDateDisabled = (date: Moment) => {
         return (
-            !date.isBetween(minDate, maxDate, undefined, "[]")
+            !date.isBetween(minDate, maxDate, "day", "[]")
             || (disableWeekends && weekends?.includes(date.day()))
             || disabledDatesFn?.(date.toDate(), CalendarViewsEnum.Days)
             || momentDisabledDates?.some(d => d.isSame(date, "day"))

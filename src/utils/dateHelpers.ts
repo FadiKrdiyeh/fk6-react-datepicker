@@ -1,10 +1,3 @@
-// export const DATE_FORMAT = 'YYYY/MM/DD';
-// export const DATE_FORMAT = 'iYYYY/iMM/iDD';
-// // export const CURRENT_DATE_FORMAT = 'MMMM YYYY';
-// export const CURRENT_DATE_FORMAT = 'iMMMM iYYYY';
-// export const CURRENT_DATE_HIJRI_FORMAT = 'iMMMM iYYYY';
-// export const HIJRI_DATE_FORMAT = 'iYYYY/iMM/iDD';
-
 import moment, { isMoment, type Moment } from "moment-hijri";
 import { MOMENT_MAX_SUPPORTED_DATE, MOMENT_MIN_SUPPORTED_DATE } from "./constants.js";
 

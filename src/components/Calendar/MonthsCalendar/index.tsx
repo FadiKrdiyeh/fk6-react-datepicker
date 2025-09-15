@@ -1,4 +1,4 @@
-import { type Moment } from 'moment-hijri';
+import moment, { type Moment } from 'moment-hijri';
 import { useMemo, type FC, type ReactNode } from 'react';
 
 import { getLocalizedMomentDate } from '../../../utils/dateHelpers.js';
@@ -61,7 +61,7 @@ export const MonthsCalendar: FC<AllMonthsCalendarProps> = ({
 
     const isDateDisabled = (date: Moment) => {
         return (
-            !date.isBetween(minDate, maxDate, "day", "[]")
+            !date.isBetween(minDate, maxDate, "month", "[]")
             || disabledDatesFn?.(date.toDate(), CalendarViewsEnum.Months)
             || momentDisabledMonths?.some(d => d.isSame(date, "month"))
             || momentDisabledYears?.some(d => d.isSame(date, "year"))
@@ -70,7 +70,13 @@ export const MonthsCalendar: FC<AllMonthsCalendarProps> = ({
 
     const handleMonthClick = (date: Moment) => {
         if (isDateDisabled(date)) return;
-        onSelect(date.toDate());
+
+        if (date.isBetween(minDate, maxDate, undefined, '[]'))
+            onSelect?.(date.toDate());
+        else if (date.isBefore(minDate))
+            onSelect?.(moment(minDate).toDate());
+        else
+            onSelect?.(moment(maxDate).toDate());
     };
 
     const renderCell = (month: Moment) => {

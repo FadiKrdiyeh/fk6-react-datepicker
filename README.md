@@ -167,12 +167,12 @@ This `DatePicker` allow you to render your own custom input component (`MyCustom
 
 ```tsx
 <DatePicker
-  renderInput={(inputProps) => (
+  renderInput={(dateFieldProps) => (
     <MyCustomInput
-      ref={inputProps.ref}
-      value={inputProps.value || ""}
-      onChange={inputProps.onChange}
-      onClick={inputProps.onOpenRequest}
+      readOnly
+      ref={dateFieldProps.ref}
+      value={dateFieldProps.value}
+      onClick={dateFieldProps.onOpenRequest}
     />
   )}
 />
@@ -210,28 +210,28 @@ You can override CSS variables in your styles:
 
 ### Common Props
 
-| Prop                               | Type                                                       | Default        | Description                                                                              |
-| ---------------------------------- | ---------------------------------------------------------- | -------------- | ---------------------------------------------------------------------------------------- |
-| `value`                            | `Date \| Moment \| null`                                   | `null`         | The currently selected date.                                                             |
-| `defaultValue`                     | `Date \| Moment \| null`                                   | `null`         | Uncontrolled selected date.                                                              |
-| `onChange`                         | `(date: Date \| null) => void`                             | —              | Callback fired when a date is selected.                                                  |
-| `minDate`                          | `Date \| Moment`                                           | `"1937-03-14"` | The earliest date a user can select. Dates before this are disabled.                     |
-| `maxDate`                          | `Date \| Moment`                                           | `"2077-10-17"` | The latest date a user can select. Dates after this are disabled.                        |
-| `disabledDates`                    | `(Date \| Moment)[]`                                       | —              | Array of Date objects that should be disabled in the calendar.                           |
-| `disabledDatesFn`                  | `(date: Date) => boolean`                                  | —              | Function to disable dates dynamically.                                                   |
-| `locale`                           | `string`                                                   | `"en"`         | Moment.js locale (e.g. `"ar"`, `"ar-sa"`, `"en-gb"`).                                    |
-| `format`                           | `string`                                                   | `"YYYY/MM/DD"` | Specifies the format pattern used to display and interpret dates.                        |
-| `calendar`                         | `gregorian` \| `hijri`                                     | `"gregorian"`  | Specifies the calendar system used for date calculations and display.                    |
-| `anchorEl`                         | `HTMLElement \| null`                                      | `null`         | When in popover mode, the element to anchor the calendar to.                             |
-| `closeOnSelect`                    | `boolean`                                                  | `true`         | Determines whether the calendar should close immediately after a date is selected.       |
-| `readOnly`                         | `boolean`                                                  | `false`        | Prevents manual input/editing but still allows interaction (e.g. calendar popover).      |
-| `disabled`                         | `boolean`                                                  | `false`        | Fully disables the component—no input, no interaction, and typically styled as inactive. |
-| `theme`                            | `light` \| `dark`                                          | `light`        | Sets the calendar's color scheme to either light or dark mode.                           |
-| `renderInput`                      | `(props: `[FieldProps](#field-props)`) => ReactNode`       | —              | A function that receives input props and returns a custom input component.               |
-| `renderCalendar`                   | `(props: `[CalendarProps](#calendar-props)`) => ReactNode` | —              | A function that receives calendar props and returns a custom calendar layout.            |
-| `onOpenChange`                     | `(open: boolean) => void`                                  | —              | Called with a boolean value whenever the calendar's visibility changes.                  |
-| [`calendarProps`](#calendar-props) | `CalendarProps`                                            | —              | An object containing props that customize the rendering and behavior of the calendar.    |
-| [`fieldProps`](#field-props)       | `FieldProps`                                               | —              | An object containing props that customize the rendering and behavior of the date field.  |
+| Prop                               | Type                                                          | Default        | Description                                                                              |
+| ---------------------------------- | ------------------------------------------------------------- | -------------- | ---------------------------------------------------------------------------------------- |
+| `value`                            | `Date \| Moment \| null`                                      | `null`         | The currently selected date.                                                             |
+| `defaultValue`                     | `Date \| Moment \| null`                                      | `null`         | Uncontrolled selected date.                                                              |
+| `onChange`                         | `(date: Date \| null) => void`                                | —              | Callback fired when a date is selected.                                                  |
+| `minDate`                          | `Date \| Moment`                                              | `"1937-03-14"` | The earliest date a user can select. Dates before this are disabled.                     |
+| `maxDate`                          | `Date \| Moment`                                              | `"2077-10-17"` | The latest date a user can select. Dates after this are disabled.                        |
+| `disabledDates`                    | `(Date \| Moment)[]`                                          | —              | Array of Date objects that should be disabled in the calendar.                           |
+| `disabledDatesFn`                  | `(date: Date) => boolean`                                     | —              | Function to disable dates dynamically.                                                   |
+| `locale`                           | `string`                                                      | `"en"`         | Moment.js locale (e.g. `"ar"`, `"ar-sa"`, `"en-gb"`).                                    |
+| `format`                           | `string`                                                      | `"YYYY/MM/DD"` | Specifies the format pattern used to display and interpret dates.                        |
+| `calendar`                         | `gregorian` \| `hijri`                                        | `"gregorian"`  | Specifies the calendar system used for date calculations and display.                    |
+| `anchorEl`                         | `HTMLElement \| null`                                         | `null`         | When in popover mode, the element to anchor the calendar to.                             |
+| `closeOnSelect`                    | `boolean`                                                     | `true`         | Determines whether the calendar should close immediately after a date is selected.       |
+| `readOnly`                         | `boolean`                                                     | `false`        | Prevents manual input/editing but still allows interaction (e.g. calendar popover).      |
+| `disabled`                         | `boolean`                                                     | `false`        | Fully disables the component—no input, no interaction, and typically styled as inactive. |
+| `theme`                            | `light` \| `dark`                                             | `light`        | Sets the calendar's color scheme to either light or dark mode.                           |
+| `renderInput`                      | `(props: `[DateFieldExtraProps](#field-props)`) => ReactNode` | —              | A function that receives input props and returns a custom input component.               |
+| `renderCalendar`                   | `(props: `[CalendarProps](#calendar-props)`) => ReactNode`    | —              | A function that receives calendar props and returns a custom calendar layout.            |
+| `onOpenChange`                     | `(open: boolean) => void`                                     | —              | Called with a boolean value whenever the calendar's visibility changes.                  |
+| [`calendarProps`](#calendar-props) | `CalendarProps`                                               | —              | An object containing props that customize the rendering and behavior of the calendar.    |
+| [`fieldProps`](#field-props)       | `FieldProps`                                                  | —              | An object containing props that customize the rendering and behavior of the date field.  |
 
 ## Calendar Props
 
@@ -309,17 +309,20 @@ You can override CSS variables in your styles:
 
 ## Field Props
 
-| Prop            | Type                                          | Default        | Description                                                                             |
-| --------------- | --------------------------------------------- | -------------- | --------------------------------------------------------------------------------------- |
-| `value`         | `Date \| Moment \| null`                      | `null`         | The currently selected date.                                                            |
-| `defaultValue`  | `Date \| Moment \| null`                      | `null`         | Uncontrolled selected date.                                                             |
-| `format`        | `string`                                      | `"YYYY/MM/DD"` | Specifies the format pattern used to display and interpret dates.                       |
-| `clearable`     | `boolean`                                     | `true`         | Enables a UI control to clear the selected date, resetting the input.                   |
-| `showIcon`      | `boolean`                                     | `true`         | Toggles visibility of the calendar icon in the calendar input.                          |
-| `renderIcon`    | `() => ReactNode`                             | —              | A function that returns a custom calendar icon element, replacing the default icon.     |
-| `onChange`      | `(date: Date \|null) => void`                 | —              | Called when the selected date changes. Receives the new value.                          |
-| `onInputChange` | `(date: Date \|null) => void`                 | —              | Called whenever the input value changes. Receives the raw string entered.               |
-| `onOpenRequest` | `(e: HTMLElement \| boolean \| null) => void` | —              | Called when the calendar or popover requests to open. Useful for controlled components. |
+| Prop            | Type                                          | Default        | Description                                                                                                                   |
+| --------------- | --------------------------------------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `ref`           | `React.Ref`                                   | —              | Provides direct access to the date input field, enabling actions like focusing or reading the selected date programmatically. |
+| `value`         | `Date \| Moment \| null`                      | `null`         | The currently selected date.                                                                                                  |
+| `defaultValue`  | `Date \| Moment \| null`                      | `null`         | Uncontrolled selected date.                                                                                                   |
+| `format`        | `string`                                      | `"YYYY/MM/DD"` | Specifies the format pattern used to display and interpret dates.                                                             |
+| `clearable`     | `boolean`                                     | `true`         | Enables a UI control to clear the selected date, resetting the input.                                                         |
+| `showIcon`      | `boolean`                                     | `true`         | Toggles visibility of the calendar icon in the calendar input.                                                                |
+| `readOnly`      | `boolean`                                     | —              | Prevents manual input/editing but still allows interaction (e.g. calendar popover).                                           |
+| `disabled`      | `boolean`                                     | —              | Fully disables the component—no input, no interaction, and typically styled as inactive.                                      |
+| `renderIcon`    | `() => ReactNode`                             | —              | A function that returns a custom calendar icon element, replacing the default icon.                                           |
+| `onChange`      | `(date: Date \|null) => void`                 | —              | Called when the selected date changes. Receives the new value.                                                                |
+| `onInputChange` | `(date: Date \|null) => void`                 | —              | Called whenever the input value changes. Receives the raw string entered.                                                     |
+| `onOpenRequest` | `(e: HTMLElement \| boolean \| null) => void` | —              | Called when the calendar or popover requests to open. Useful for controlled components.                                       |
 
 ---
 

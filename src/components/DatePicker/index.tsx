@@ -7,7 +7,7 @@ import { fixSupportedDate } from "../../utils/dateHelpers.js";
 import { CalendarsEnum, GregorianFormatsEnum, HijriFormatsEnum, ThemesEnum } from "../../utils/enums.js";
 import { clsx } from "../../utils/stringHelpers.js";
 import { Calendar, type CalendarProps } from "../Calendar/index.js";
-import { DateField, type DateFieldProps } from "../DateField/index.js";
+import { DateField, type DateFieldExtraProps, type DateFieldProps } from "../DateField/index.js";
 
 import "../../scss/components/datepicker.scss";
 
@@ -30,7 +30,7 @@ export interface DatePickerProps extends Omit<ComponentProps<'div'>, 'defaultVal
 	theme?: `${ThemesEnum}`;
 	calendarProps?: Partial<CalendarProps>;
 	fieldProps?: Partial<DateFieldProps>;
-	renderInput?: (props: DateFieldProps) => React.ReactNode;
+	renderInput?: (dateFieldProps: DateFieldExtraProps) => React.ReactNode;
 	renderCalendar?: (props: CalendarProps) => React.ReactNode;
 	onChange?: (date: Date | null) => void;
 	onOpenChange?: (open: boolean) => void;
@@ -100,24 +100,24 @@ export const DatePicker: React.FC<DatePickerProps> = forwardRef(({
 	const inputElement = renderInput ? (
 		renderInput({
 			value: selectedDate,
+			format: dateFormat,
+			ref: fieldRef,
+			readOnly,
+			disabled,
+			placeholder,
+			onOpenRequest: handleFieldOpenRequest,
 			onChange: (d: Date | null) => {
 				if (!isControlledValue) setInternalValue(d);
 				onChange?.(d);
 			},
-			onOpenRequest: handleFieldOpenRequest,
-			ref: fieldRef,
-			placeholder,
-			format: dateFormat,
-			disabled,
-			readOnly,
 		})
 	) : (
 		<DateField
 			{...fieldProps}
 			ref={fieldRef}
 			value={selectedDate}
-			placeholder={placeholder || ''}
 			format={dateFormat}
+			placeholder={placeholder || ''}
 			disabled={disabled}
 			readOnly={readOnly}
 			locale={locale}
