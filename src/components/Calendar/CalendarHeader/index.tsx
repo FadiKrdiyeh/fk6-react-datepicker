@@ -54,7 +54,7 @@ export const CalendarHeader: FC<CalendarHeaderProps> = ({
         && (view === CalendarViewsEnum.Years || (view === CalendarViewsEnum.Months && isYearsEnabled) || (view === CalendarViewsEnum.Days && isMonthsEnabled))
     ), [currentDate, view, isMonthsEnabled, isYearsEnabled]);
 
-    const isRTL = useMemo(() => calendarEl?.dir === 'rtl', [calendarEl]);
+    const isRTL = useMemo(() => ((calendarEl?.dir || document.body.dir || document.dir) === 'rtl'), [calendarEl?.dir]);
 
     const handleMonthClick = () => {
         if (!isMonthsEnabled) return;
