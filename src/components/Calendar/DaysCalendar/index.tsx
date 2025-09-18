@@ -1,9 +1,11 @@
 import moment, { type Moment } from 'moment-hijri';
 import { Fragment, useMemo, type FC, type ReactNode } from 'react';
 
-import { getLocalizedMomentDate } from '../../../utils/dateHelpers.js';
-import { CalendarsEnum, CalendarViewsEnum } from '../../../utils/enums.js';
+import { extractTimeParts, getLocalizedMomentDate, weekOfHijriYear } from '../../../utils/dateHelpers.js';
+import { CalendarsEnum, CalendarViewsEnum, GregorianFormatsEnum, HijriFormatsEnum } from '../../../utils/enums.js';
 import { clsx } from '../../../utils/stringHelpers.js';
+
+type RenderDayOptions = { selected: boolean, disabled: boolean, today: boolean, highlighted: boolean, focused: boolean, holiday: boolean, outside: boolean, onClick: () => void };
 
 interface AllDaysCalendarProps {
     value?: Date | Moment | null;
@@ -22,13 +24,14 @@ interface AllDaysCalendarProps {
     disabledYears?: (Date | Moment)[]; // mark specific years disabled
     weekends?: number[];
     disableWeekends?: boolean;
-    renderDay?: (date: Date) => ReactNode; // custom renderer for day cells
-    renderWeekNumber?: ((weekNumber: number | undefined) => ReactNode) | undefined; // custom renderer for day cells
+    disableLocaleDigits?: boolean | undefined;
+    renderDay?: (renderedValue: string, date: Date, options: RenderDayOptions) => ReactNode; // custom renderer for day cells
+    renderWeekNumber?: ((renderedValue: string, weekNumber: number) => ReactNode) | undefined; // custom renderer for day cells
     disabledDatesFn?: ((date: Date, view: `${CalendarViewsEnum}`) => boolean) | undefined; // mark specific dates disabled
     onSelect: (date: Date) => void;
 }
 
-export type DaysCalendarProps = Omit<AllDaysCalendarProps, "minDate" | "maxDate" | "value" | "calendar" | "focusedDate" | "locale" | "currentDate">
+export type DaysCalendarProps = Omit<AllDaysCalendarProps, "minDate" | "maxDate" | "value" | "calendar" | "focusedDate" | "locale" | "currentDate" | "disableLocaleDigits">
 
 export const DaysCalendar: FC<AllDaysCalendarProps> = ({
     value,
@@ -47,12 +50,14 @@ export const DaysCalendar: FC<AllDaysCalendarProps> = ({
     disabledYears,
     weekends,
     disableWeekends,
+    disableLocaleDigits,
     renderDay,
     renderWeekNumber,
     disabledDatesFn,
     onSelect,
 }) => {
     const isHijri = calendar === CalendarsEnum.Hijri;
+    const formats = isHijri ? HijriFormatsEnum : GregorianFormatsEnum;
     const momentHighlightedDates = highlightDates?.map(d => moment(d));
 
     // Generate all days for the month grid (including leading/trailing padding)
@@ -67,9 +72,10 @@ export const DaysCalendar: FC<AllDaysCalendarProps> = ({
 
         const endDay = endOfMonth.clone().endOf("week").add(firstDayOfWeek, "days");
         const days: Moment[] = [];
-        let day = startDay.clone();
+        let day = startDay.locale(locale ?? "ar").clone();
 
-        while (day.isBefore(endDay, "day") || day.isSame(endDay, "day")) {
+        // while (day.isBefore(endDay, "day") || day.isSame(endDay, "day")) {
+        while (day.isSameOrBefore(endDay, "day")) {
             if (!isNaN(day.iDate()))
                 days.push(day.clone());
 
@@ -83,20 +89,21 @@ export const DaysCalendar: FC<AllDaysCalendarProps> = ({
 
         for (let i = 0; i < calendarDays.length; i += 7) {
             const week = calendarDays.slice(i, i + 7);
-            const weekNum = week[0]?.isoWeek();
+
             const isCurrentMonth = isHijri
                 ? (week[0]?.iMonth() === currentDate.iMonth()) || (week[week.length - 1]?.iMonth() === currentDate.iMonth())
                 : (week[0]?.month() === currentDate.month()) || (week[week.length - 1]?.month() === currentDate.month());
 
             if (isCurrentMonth)
-                weeks.push({ weekNum, days: week });
+                weeks.push({ weekNum: week[0], days: week }); // Take always the third week because it's always fully in the current month...
         }
 
         return weeks;
     }, [calendarDays]);
 
     const weekDays = useMemo(() => {
-        const allDays = moment.weekdaysMin(); // ["Sun", "Mon", ...]
+        const allDays = moment.localeData(locale).weekdaysMin(); // ["Sun", "Mon", ...]
+
         if (showWeeksNumber)
             return ['#', ...allDays.slice(firstDayOfWeek), ...allDays.slice(0, firstDayOfWeek)];
         return [...allDays.slice(firstDayOfWeek), ...allDays.slice(0, firstDayOfWeek)];
@@ -109,17 +116,18 @@ export const DaysCalendar: FC<AllDaysCalendarProps> = ({
     const isDateDisabled = (date: Moment) => {
         return (
             !date.isBetween(minDate, maxDate, "day", "[]")
-            || (disableWeekends && weekends?.includes(date.day()))
-            || disabledDatesFn?.(date.toDate(), CalendarViewsEnum.Days)
-            || momentDisabledDates?.some(d => d.isSame(date, "day"))
-            || momentDisabledMonths?.some(d => d.isSame(date, "month"))
-            || momentDisabledYears?.some(d => d.isSame(date, "year"))
+            || (!!disableWeekends && !!weekends?.includes(date.day()))
+            || !!disabledDatesFn?.(date.toDate(), CalendarViewsEnum.Days)
+            || !!momentDisabledDates?.some(d => d.isSame(date, "day"))
+            || !!momentDisabledMonths?.some(d => d.isSame(date, "month"))
+            || !!momentDisabledYears?.some(d => d.isSame(date, "year"))
         );
     };
 
     const handleDayClick = (date: Moment) => {
         if (isDateDisabled(date)) return;
-        onSelect(date.toDate());
+        const extractedTimeParts = extractTimeParts(currentDate, false, locale);
+        onSelect(date.add({ hours: extractedTimeParts?.hour || 0, minutes: extractedTimeParts?.minute || 0, seconds: extractedTimeParts?.second || 0 }).toDate());
     };
 
     const renderCell = (day: Moment) => {
@@ -128,33 +136,38 @@ export const DaysCalendar: FC<AllDaysCalendarProps> = ({
         if (hideOutsideDays && !isCurrentMonth)
             return <span key={day.toString()} className="fkdp-calendar__cell fkdp-calendar__cell--outside"></span>
 
-        const isSelected = value && getLocalizedMomentDate(value, locale).isSame(day, "day");
+        const isSelected = !!value && getLocalizedMomentDate(value, locale).isSame(day, "day");
         const isDisabled = isDateDisabled(day);
         const isToday = getLocalizedMomentDate(undefined, locale).isSame(day, "day");
-        const isHighlighted = momentHighlightedDates?.some(d => d.isSame(day, "day"));
-        const isHoliday = weekends?.includes(day.day());
+        const isHighlighted = !!momentHighlightedDates?.some(d => d.isSame(day, "day"));
+        const isFocused = day.isSame(focusedDate, "day");
+        const isHoliday = !!weekends?.includes(day.day());
+
+        const renderedDay = disableLocaleDigits ? (isHijri ? day.iDate().toString() : day.date().toString()) : day.format(formats.Day);
 
         return (
-            <button
-                key={day.toString()}
-                type="button"
-                className={clsx({
-                    "fkdp-calendar__cell": true,
-                    "fkdp-calendar__cell--selected": isSelected,
-                    "fkdp-calendar__cell--disabled": isDisabled,
-                    "fkdp-calendar__cell--today": isToday,
-                    "fkdp-calendar__cell--highlighted": isHighlighted,
-                    "fkdp-calendar__cell--focused": day.isSame(focusedDate, "day"),
-                    "fkdp-calendar__cell--holiday": isHoliday,
-                    "fkdp-calendar__cell--outside": !isCurrentMonth,
-                })}
-                onClick={() => handleDayClick(day)}
-                disabled={isDisabled}
-                tabIndex={day.isSame(focusedDate, "day") ? 0 : -1}
-                aria-selected={!!isSelected}
-            >
-                {renderDay ? renderDay(day.toDate()) : (isHijri ? day.iDate() : day.date())}
-            </button>
+            !!renderDay ? renderDay(renderedDay, day.toDate(), { selected: isSelected, disabled: isDisabled, today: isToday, highlighted: isHighlighted, focused: isFocused, holiday: isHoliday, outside: !isCurrentMonth, onClick: () => handleDayClick(day) }) : (
+                <button
+                    key={day.toString()}
+                    type="button"
+                    className={clsx({
+                        "fkdp-calendar__cell": true,
+                        "fkdp-calendar__cell--selected": isSelected,
+                        "fkdp-calendar__cell--disabled": isDisabled,
+                        "fkdp-calendar__cell--today": isToday,
+                        "fkdp-calendar__cell--highlighted": isHighlighted,
+                        "fkdp-calendar__cell--focused": isFocused,
+                        "fkdp-calendar__cell--holiday": isHoliday,
+                        "fkdp-calendar__cell--outside": !isCurrentMonth,
+                    })}
+                    onClick={() => handleDayClick(day)}
+                    disabled={isDisabled}
+                    tabIndex={day.isSame(focusedDate, "day") ? 0 : -1}
+                    aria-selected={!!isSelected}
+                >
+                    {renderedDay}
+                </button>
+            )
         );
     };
 
@@ -176,18 +189,24 @@ export const DaysCalendar: FC<AllDaysCalendarProps> = ({
             </div>
 
             <div className={clsx({ "fkdp-calendar__grid": true, "fkdp-calendar__grid-days": true, "fkdp-calendar__grid-with-weeknum": !!showWeeksNumber })}>
-                {calendarWeeks.map((week, i) => (
-                    <Fragment key={i}>
-                        {showWeeksNumber && (
-                            <div className="fkdp-calendar__cell">
-                                {!!renderWeekNumber ? renderWeekNumber(week.weekNum) : (
-                                    <span className="fkdp-calendar__cell--weeknum">{week.weekNum}</span>
-                                )}
-                            </div>
-                        )}
-                        {week.days.map(day => renderCell(day))}
-                    </Fragment>
-                ))}
+                {calendarWeeks.map((week, i) => {
+                    // const test = week.weekNum?.clone().add(firstDayOfWeek, "days");
+                    // const renderedWeekNumber = disableLocaleDigits ? ((isHijri ? test?.iWeek().toString() : week.weekNum?.week().toString()) ?? "") : week.weekNum?.format(formats.WeekNumber) || ""
+                    const renderedWeekNumber = disableLocaleDigits ? ((isHijri ? week.weekNum?.iWeek().toString() : week.weekNum?.week().toString()) ?? "") : week.weekNum?.format(formats.WeekNumber) || ""
+
+                    return (
+                        <Fragment key={i}>
+                            {showWeeksNumber && (
+                                <div className="fkdp-calendar__cell">
+                                    {!!renderWeekNumber ? renderWeekNumber(renderedWeekNumber, week.weekNum?.isoWeek() || -1) : (
+                                        <span className="fkdp-calendar__cell--weeknum">{renderedWeekNumber}</span>
+                                    )}
+                                </div>
+                            )}
+                            {week.days.map(day => renderCell(day))}
+                        </Fragment>
+                    )
+                })}
             </div>
         </div>
     )

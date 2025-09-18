@@ -12,10 +12,11 @@ import { CalendarHeader } from "./CalendarHeader/index.js";
 import { DaysCalendar, type DaysCalendarProps } from "./DaysCalendar/index.js";
 import { MonthsCalendar, type MonthsCalendarProps } from "./MonthsCalendar/index.js";
 import { YearsCalendar, type YearsCalendarProps } from "./YearsCalendar/index.js";
+import { TimePicker, type TimePickerProps } from "./TimePicker/index.js";
 
 import "../../scss/components/calendar.scss";
 
-export interface CalendarProps extends Omit<ComponentProps<'div'>, 'onSelect'> {
+export interface AllCalendarProps extends Omit<ComponentProps<'div'>, 'onSelect'> {
     open?: boolean;
     value?: Date | Moment | null;
     initialDate?: Date | Moment | undefined;                    // date to show initially
@@ -27,6 +28,7 @@ export interface CalendarProps extends Omit<ComponentProps<'div'>, 'onSelect'> {
     yearsCalendarProps?: Partial<YearsCalendarProps>;
     monthsCalendarProps?: Partial<MonthsCalendarProps>;
     daysCalendarProps?: Partial<DaysCalendarProps>;
+    timePickerProps?: Partial<TimePickerProps>;
     enableGoToToday?: boolean;
     mode?: `${PopupModesEnum}`;
     theme?: `${ThemesEnum}`;
@@ -35,16 +37,20 @@ export interface CalendarProps extends Omit<ComponentProps<'div'>, 'onSelect'> {
     isControlled?: boolean;
     views?: `${CalendarViewsEnum}`[];
     initialView?: `${CalendarViewsEnum}`;
+    showTimePicker?: boolean;
+    hideFooter?: boolean;
+    disableLocaleDigits?: boolean | undefined;
     // stayInViewport?: boolean;
     disabledDatesFn?: (date: Date, view: `${CalendarViewsEnum}`) => boolean; // mark specific dates disabled
-    renderGoToToday?: () => ReactNode; // custom renderer for go to today button
+    renderGoToToday?: (onClick: () => void) => ReactNode; // custom renderer for go to today button
+    renderConfirmBtn?: (onClick: () => void) => ReactNode; // custom renderer for confirm today button
     onSelect?: (date: Date, close?: boolean) => void;
     onClose?: () => void;
 }
 
-// export type CalendarProps = Omit<AllCalendaCalendarProps, "calendar" | "focusedDate">
+export type CalendarProps = Omit<AllCalendarProps, "showTimePicker">
 
-export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(({
+export const Calendar = forwardRef<HTMLDivElement, AllCalendarProps>(({
     open,
     value = null,
     initialDate,
@@ -60,20 +66,25 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(({
     monthsCalendarProps,
     yearsCalendarProps,
     daysCalendarProps,
+    timePickerProps,
     enableGoToToday,
     isControlled,
     views,
     initialView,
+    showTimePicker,
+    hideFooter,
+    disableLocaleDigits,
     // stayInViewport = true,
     renderGoToToday,
+    renderConfirmBtn,
     disabledDatesFn,
     onSelect,
     onClose,
     ...calendarProps
 }, ref) => {
     const isOpen = open ?? mode === "inline";
-    const minDate = fixSupportedDate(_minDate) ?? MOMENT_MIN_SUPPORTED_DATE.toDate();
-    const maxDate = fixSupportedDate(_maxDate) ?? MOMENT_MAX_SUPPORTED_DATE.toDate();
+    const minDate = fixSupportedDate(_minDate, locale) ?? MOMENT_MIN_SUPPORTED_DATE.toDate();
+    const maxDate = fixSupportedDate(_maxDate, locale) ?? MOMENT_MAX_SUPPORTED_DATE.toDate();
 
     const isMonthsEnabled = useMemo(() => views === undefined || views.includes('months'), [views]);
     const isYearsEnabled = useMemo(() => views === undefined || views.includes('years'), [views]);
@@ -81,8 +92,8 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(({
 
     // const [isOpen, setIsOpen] = useState(mode === "inline");
     const [view, setView] = useState<`${CalendarViewsEnum}`>(initialView ?? views?.[0] ?? CalendarViewsEnum.Days);
-    const [currentDate, setCurrentDate] = useState(getLocalizedMomentDate(fixSupportedDate(value || initialDate || new Date()), locale));
-    const [focusedDate, setFocusedDate] = useState(getLocalizedMomentDate(fixSupportedDate(value || new Date()), locale));
+    const [currentDate, setCurrentDate] = useState(getLocalizedMomentDate(fixSupportedDate(value || initialDate || new Date(), locale), locale));
+    const [focusedDate, setFocusedDate] = useState(getLocalizedMomentDate(fixSupportedDate(value || new Date(), locale), locale));
     const [styles, setStyles] = useState<CSSProperties>({ visibility: 'hidden' });
 
     const calendarRef = useRef<HTMLDivElement>(null);
@@ -207,8 +218,9 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(({
             minDate={minDate}
             maxDate={maxDate}
             locale={locale}
+            disableLocaleDigits={disableLocaleDigits}
             onSelect={date => {
-                onSelect?.(date, true);
+                onSelect?.(date, !showTimePicker);
                 handleSetCurrentDate(getLocalizedMomentDate(date, locale));
                 setFocusedDate(getLocalizedMomentDate(date, locale));
             }}
@@ -247,6 +259,7 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(({
             minDate={minDate}
             maxDate={maxDate}
             locale={locale}
+            disableLocaleDigits={disableLocaleDigits}
             onSelect={date => {
                 onSelect?.(date);
                 handleSetCurrentDate(getLocalizedMomentDate(date, locale));
@@ -306,18 +319,47 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(({
                 view={view}
                 views={views}
                 calendarEl={calendarRef.current}
+                disableLocaleDigits={disableLocaleDigits}
                 onChangeView={setView}
                 onCurrentDateChange={handleSetCurrentDate}
             />
 
-            {renderedView()}
+            <div style={{ display: 'flex' }}>
+                {renderedView()}
+                {showTimePicker && (
+                    <>
+                        <div className="fkdp-calendar__divider" />
+                        <TimePicker
+                            {...timePickerProps}
+                            value={value}
+                            currentDate={currentDate}
+                            initialDate={initialDate}
+                            locale={locale}
+                            disableLocaleDigits={disableLocaleDigits}
+                            onSelect={(date) => {
+                                if (!date)
+                                    return;
 
-            <CalendarFooter
-                locale={locale}
-                enableGoToToday={enableGoToToday}
-                renderGoToToday={renderGoToToday}
-                onCurrentDateChange={handleSetCurrentDate}
-            />
+                                onSelect?.(date);
+                                handleSetCurrentDate(getLocalizedMomentDate(date, locale));
+                                setFocusedDate(getLocalizedMomentDate(date, locale));
+                            }}
+                        />
+                    </>
+                )}
+            </div>
+
+            {!hideFooter && (
+                <CalendarFooter
+                    showTimePicker={showTimePicker}
+                    locale={locale}
+                    enableGoToToday={enableGoToToday}
+                    renderGoToToday={renderGoToToday}
+                    renderConfirmBtn={renderConfirmBtn}
+                    onConfirm={() => onClose?.()}
+                    onCurrentDateChange={handleSetCurrentDate}
+                />
+            )}
         </div>
     )
 

@@ -64,8 +64,8 @@ export const DatePicker: React.FC<DatePickerProps> = forwardRef(({
 	useHandleMinMaxDates(_minDate, _maxDate);
 	const isControlledValue = value !== undefined;
 	const isControlledOpen = open !== undefined;
-	const minDate = fixSupportedDate(_minDate) ?? MOMENT_MIN_SUPPORTED_DATE.toDate();
-	const maxDate = fixSupportedDate(_maxDate) ?? MOMENT_MAX_SUPPORTED_DATE.toDate();
+	const minDate = fixSupportedDate(_minDate, locale) ?? MOMENT_MIN_SUPPORTED_DATE.toDate();
+	const maxDate = fixSupportedDate(_maxDate, locale) ?? MOMENT_MAX_SUPPORTED_DATE.toDate();
 	const isHijri = calendar === CalendarsEnum.Hijri;
 	const formats = isHijri ? HijriFormatsEnum : GregorianFormatsEnum;
 	const dateFormat = format ?? formats.Date;
@@ -121,6 +121,7 @@ export const DatePicker: React.FC<DatePickerProps> = forwardRef(({
 			disabled={disabled}
 			readOnly={readOnly}
 			locale={locale}
+			disableLocaleDigits={calendarProps?.disableLocaleDigits}
 			onOpenRequest={handleFieldOpenRequest}
 			onChange={(d) => {
 				if (!isControlledValue) setInternalValue(d);
@@ -153,6 +154,7 @@ export const DatePicker: React.FC<DatePickerProps> = forwardRef(({
 			locale={locale}
 			calendar={calendar}
 			initialDate={initialDate}
+			disableLocaleDigits={calendarProps?.disableLocaleDigits}
 			onSelect={handleSelect}
 			onClose={() => handleOpen(false)}
 		/>

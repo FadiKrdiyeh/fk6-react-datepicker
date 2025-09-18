@@ -18,16 +18,16 @@ export interface DateFieldExtraProps {
     disabled?: boolean;
     readOnly?: boolean;
     placeholder?: string | undefined;
+    disableLocaleDigits?: boolean | undefined;
     renderIcon?: () => ReactNode;
     onChange?: (date: Date | null) => void;
     onInputChange?: (raw: string) => void;
     onOpenRequest?: (e?: MouseEvent | HTMLElement | boolean | null) => void;       // e.g. when user clicks icon or presses key
 }
 
-
 export interface DateFieldInputExtraProps extends Omit<ComponentProps<'input'>, 'value' | 'onChange' | 'defaultValue' | 'disabled' | 'readOnly' | 'placeholder' | 'ref'>, DateFieldExtraProps { }
 
-export type DateFieldProps = Omit<DateFieldInputExtraProps, "clearable" | "showIcon" | "renderIcon">
+export type DateFieldProps = Omit<DateFieldInputExtraProps, "clearable" | "showIcon" | "renderIcon" | "disableLocaleDigits">
 
 export const DateField = forwardRef<HTMLInputElement, DateFieldInputExtraProps>(({
     value,
@@ -36,6 +36,7 @@ export const DateField = forwardRef<HTMLInputElement, DateFieldInputExtraProps>(
     clearable = true,
     showIcon = true,
     locale,
+    disableLocaleDigits,
     renderIcon,
     onChange,
     onInputChange,
@@ -44,9 +45,19 @@ export const DateField = forwardRef<HTMLInputElement, DateFieldInputExtraProps>(
 }, ref) => {
     const isControlled = value !== undefined;
     const [internalDate, setInternalDate] = useState<Date | Moment | null>(defaultValue);
+
+    const test = (value?: Moment | Date | null) => {
+        const formattedStr = getLocalizedMomentDate(isControlled ? value : internalDate, locale).format(format);
+
+        if (disableLocaleDigits)
+            return moment.localeData(locale).preparse(formattedStr);
+
+        return formattedStr;
+    }
+    
     const [inputValue, setInputValue] = useState<string>(
         (isControlled ? value : internalDate)
-            ? getLocalizedMomentDate(isControlled ? value : internalDate, locale).format(format)
+            ? test(isControlled ? value : internalDate)
             : ""
     );
 
@@ -65,7 +76,7 @@ export const DateField = forwardRef<HTMLInputElement, DateFieldInputExtraProps>(
     // Sync input value when controlled prop changes
     useEffect(() => {
         if (isControlled) {
-            setInputValue(value ? getLocalizedMomentDate(value, locale).format(format) : "");
+            setInputValue(value ? test(value) : "");
         }
     }, [value, isControlled, format]);
 
@@ -112,7 +123,7 @@ export const DateField = forwardRef<HTMLInputElement, DateFieldInputExtraProps>(
             // reset to last valid value
             setInputValue(
                 (isControlled ? value : internalDate)
-                    ? getLocalizedMomentDate(isControlled ? value : internalDate, locale).format(format)
+                    ? test(isControlled ? value : internalDate)
                     : ""
             );
         }

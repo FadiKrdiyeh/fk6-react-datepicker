@@ -47,6 +47,7 @@
             // background: #d0d0d0;
             transform: scale(0.95);
         }
+
         &--disabled {
             color: var(--fkdp-secondary);
             cursor: not-allowed;
@@ -54,8 +55,41 @@
     }
 
     &__footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        padding-top: 7px;
+        margin-top: 7px;
+        border-top: 1px solid var(--fkdp-secondary);
+        
+        &:not(:has(.fkdp-calendar__go-to-today)) {
+            justify-content: flex-end;
+        }
+
+        &--actions {
+            display: flex;
+            column-gap: 5px;
+        }
+        
+        &--action {
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            padding: 6px 8px;
+            min-width: 50px;
+
+            &-ok {
+                background-color: var(--fkdp-primary);
+                color: var(--fkdp-light-text);
+            }
+
+            // &-cancel {
+            //     // background-color: #ccc;
+            // }
+        }
+
         .fkdp-calendar__go-to-today {
-            margin-top: 5px;
             background-color: var(--fkdp-calendar-bg);
             color: var(--fkdp-text);
             border: none;
@@ -72,6 +106,75 @@
 
         .fkdp-calendar__grid-years {
             grid-template-columns: repeat(4, 4.15rem);
+        }
+    }
+
+    &__divider {
+        margin-inline-start: 5px;
+        width: 1px;
+        background-color: var(--fkdp-secondary);
+    }
+
+    &-time {
+        display: flex;
+        gap: 8px;
+        margin-inline-start: 5px;
+        position: relative;
+
+        &__col {
+            -ms-overflow-style: none;
+            overflow-y: auto;
+            scroll-snap-type: y mandatory;
+            // border: 1px solid #ddd;
+            // border-radius: 6px;
+            // background: var(--fkdp-calendar-bg);
+
+            &::-webkit-scrollbar {
+                display: none;
+            }
+
+            &:not(:first-child):not(:last-child)::after {
+                content: ':';
+                position: absolute;
+                top: 50%;
+                transform: translateY(-75%);
+                margin-inline-start: -6.5px;
+            }
+        }
+
+        &__item {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            scroll-snap-align: center;
+            font-size: 16px;
+            cursor: pointer;
+            opacity: 0.6;
+            border-radius: 5px;
+            transition: opacity 0.2s, font-weight 0.2s;
+            background-color: var(--fkdp-calendar-bg);
+            border: none;
+
+            &--selected {
+                font-weight: bold;
+                opacity: 1;
+                background-color: var(--fkdp-primary);
+                color: var(--fkdp-light-text);
+
+                // & ~ * {
+
+                //     // &:nth-child() {}
+                //     // background: #000;
+                // }
+            }
+
+            &--disabled {
+                cursor: not-allowed;
+            }
+        }
+
+        &__spacer {
+            pointer-events: none;
         }
     }
 
@@ -101,14 +204,26 @@
 
         &-months {
             grid-template-columns: repeat(4, 3.61rem);
+            align-items: center;
 
             .fkdp-calendar__cell {
                 border-radius: 10px !important;
+                height: fit-content;
             }
         }
 
         &-years {
             grid-template-columns: repeat(4, 3.61rem);
+            align-items: center;
+
+            .fkdp-calendar__cell {
+                border-radius: 10px !important;
+                height: fit-content;
+            }
+        }
+
+        &-time {
+            grid-template-columns: repeat(4, 2rem);
 
             .fkdp-calendar__cell {
                 border-radius: 10px !important;

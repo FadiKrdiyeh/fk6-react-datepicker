@@ -10,11 +10,17 @@ export enum CalendarViewsEnum {
 }
 
 export enum GregorianFormatsEnum {
-    Date = "YYYY/MM/DD",
-    FullYear = "YYYY",
+    D = "D",
+    Day = "DD",
+    Month = "MM",
+    ShortMonth = "MMM",
     FullMonth = "MMMM",
-    Month = "MMM",
-    FullMonthYear = "MMMM YYYY",
+    FullYear = "YYYY",
+    FullTime = "hh:mm:ss A",
+    Date = `${GregorianFormatsEnum.FullYear}/${GregorianFormatsEnum.Month}/${GregorianFormatsEnum.Day}`,
+    FullDateTime = `${GregorianFormatsEnum.Date} ${GregorianFormatsEnum.FullTime}`,
+    FullMonthYear = `${GregorianFormatsEnum.FullMonth} ${GregorianFormatsEnum.FullYear}`,
+    WeekNumber = "w",
 }
 
 // export enum GregorianFormatsEnum {
@@ -26,11 +32,17 @@ export enum GregorianFormatsEnum {
 // }
 
 export enum HijriFormatsEnum {
-    Date = "iYYYY/iMM/iDD",
+    D = "iD",
+    Day = "iDD",
+    Month = "iMM",
     FullYear = "iYYYY",
     FullMonth = "iMMMM",
-    Month = "iMMM",
-    FullMonthYear = "iMMMM iYYYY",
+    ShortMonth = "iMMM",
+    FullTime = "hh:mm:ss A",
+    Date = `${HijriFormatsEnum.FullYear}/${HijriFormatsEnum.Month}/${HijriFormatsEnum.Day}`,
+    FullDateTime = `${HijriFormatsEnum.Date} ${HijriFormatsEnum.FullTime}`,
+    FullMonthYear = `${HijriFormatsEnum.FullMonth} ${HijriFormatsEnum.FullYear}`,
+    WeekNumber = "iw",
 }
 
 export enum CalendarPositionsEnum {

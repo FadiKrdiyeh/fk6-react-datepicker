@@ -1,6 +1,3 @@
-<!-- # fk6-react-datepicker
-A React datetime picker supporting Gregorian and Hijri calendars using moment and moment-hijri (NOT READY TO USE YET!) -->
-
 # React Date Picker
 
 [![npm version](https://img.shields.io/npm/v/@fk6/react-datepicker.svg)](https://www.npmjs.com/package/@fk6/react-datepicker)
@@ -17,45 +14,36 @@ Whether you’re building a simple form date field or a complex internationalize
 
 ## ✨ Features
 
-- 🔥 **Flexible and customizable components**
+- 🔥 **Flexible & Customizable Components** - Easily tailor every part of the UI using render props, overrides, and **CSS** variables. You control the logic, layout, and styling—no rigid patterns, just full flexibility.
 
-- **🕌 Dual Calendar Support**
-  Built-in support for both **Gregorian** and **Hijri (Islamic)** calendars.
+- **🕌 Dual Calendar Support** - Built-in support for both **Gregorian** and **Hijri (Islamic)** calendars.
 
-- **🌍 Internationalization (i18n)**
-  Localize month names, weekdays, and calendar layout using `moment.js` locales.  
+- **🌍 Internationalization (i18n)** - Localize month names, weekdays, and calendar layout using `moment.js` locales.  
   Supports **RTL (Right-to-Left)** and **LTR** directions.
 
-- **🎨 Theming & Customization**
-  Supporting light & dark modes.
+- **🎨 Theming & Customization** - Supporting light & dark modes.
   Customize colors customize using **SCSS or CSS variables** without modifying the source code.
 
-- **📐 Flexible Positioning**
-  Choose from multiple popover positions (`top`, `bottom`, `start`, `end`, etc.) with automatic viewport adjustments.
+- **📐 Flexible Positioning** - Choose from multiple popover positions (`top`, `bottom`, `start`, `end`, etc.) with automatic viewport adjustments.
 
-- **📅 Multiple Calendar Views**
-  Switch easily between **Day**, **Month**, and **Year** views with a single prop.
+- **📅 Multiple Calendar Views** - Switch easily between **Day**, **Month**, and **Year** views with a single prop.
 
-- 📌 **Inline** or **Popover** modes (attach to an input field)
+- 📌 **Inline** or **Popover** - modes (attach to an input field)
 
-- **🚀 Lightweight & Performant**
-  Optimized with React hooks (`useMemo`, `useEffect`) and minimal dependencies.
+- **🚀 Lightweight & Performant** - Optimized with React hooks (`useMemo`, `useEffect`) and minimal dependencies.
 
-  - **🔒 Disable Dates**
-    Provide a custom function or array of dates to disable specific days, months, or years.
+- **🕒 Date & Time Picker Support** - Combine calendar and time picker for full datetime selection.
 
-- **📆 First Day of Week**
-  Configure which day your calendar starts on (Sunday, Monday, etc.).
+- **🔒 Disable Dates** - Provide a custom function or array of dates to disable specific days, months, or years.
 
-- **🔢 Week Numbers**
-  Optionally display ISO week numbers for better planning.
+- **📆 First Day of Week** - Configure which day your calendar starts on (Sunday, Monday, etc.).
 
-- **🖼 Inline or Popover Mode**
-  Use the calendar embedded in your layout or as a dropdown attached to an input field.
+- **🔢 Week Numbers** - Optionally display ISO week numbers for better planning.
 
-- **⚡ Simple API**
-  Minimal props with sensible defaults, but flexible enough for advanced use cases.
-- 🛠️ Written in **TypeScript** with full typings
+- **🖼 Inline or Popover Mode** - Use the calendar embedded in your layout or as a dropdown attached to an input field.
+
+- **⚡ Simple API** - Minimal props with sensible defaults, but flexible enough for advanced use cases.
+- 🛠️ Written in **TypeScript** with full typings -
 
 ---
 
@@ -92,7 +80,7 @@ Make sure these are installed in your project.
 
 ```tsx
 import React, { useState } from "react";
-import { DatePicker } from "react-date-picker";
+import { DatePicker, DateTimePicker } from "react-date-picker";
 import "@fk6/react-datepicker/react-datepicker.css";
 
 export default function App() {
@@ -101,6 +89,7 @@ export default function App() {
   return (
     <div>
       <DatePicker value={date} onChange={setDate} />
+      <DateTimePicker value={date} onChange={setDate} />
     </div>
   );
 }
@@ -208,7 +197,7 @@ You can override CSS variables in your styles:
 
 ## ⚙️ Props
 
-### Common Props
+### Common Props (Date & Date-Time Picker)
 
 | Prop                               | Type                                                          | Default        | Description                                                                              |
 | ---------------------------------- | ------------------------------------------------------------- | -------------- | ---------------------------------------------------------------------------------------- |
@@ -233,53 +222,59 @@ You can override CSS variables in your styles:
 | [`calendarProps`](#calendar-props) | `CalendarProps`                                               | —              | An object containing props that customize the rendering and behavior of the calendar.    |
 | [`fieldProps`](#field-props)       | `FieldProps`                                                  | —              | An object containing props that customize the rendering and behavior of the date field.  |
 
+---
+
 ## Calendar Props
 
 ### Common Props
 
-| Prop                  | Type                                                                                                                                                                                       | Default        | Description                                                                                       |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------- | ------------------------------------------------------------------------------------------------- |
-| `open`                | `boolean`                                                                                                                                                                                  | `false`        | Determines whether the calendar or picker is currently visible.                                   |
-| `value`               | `Date \| Moment \| null`                                                                                                                                                                   | `null`         | The currently selected date.                                                                      |
-| `initialDate`         | `Date \| Moment \| null`                                                                                                                                                                   | `null`         | The date the calendar initially focuses on when rendered.                                         |
-| `onSelect`            | `(date: Date \| null) => void`                                                                                                                                                             | —              | Callback fired when a date is selected.                                                           |
-| `disablePortal`       | `boolean`                                                                                                                                                                                  | `false`        | If true, renders the calendar/popover inline instead of using a portal.                           |
-| `enableGoToToday`     | `boolean`                                                                                                                                                                                  | —              | If true, displays a button that navigates the calendar to today’s date.                           |
-| `renderGoToToday`     | `() => ReactNode`                                                                                                                                                                          | —              | A function that returns a custom element for the “Go to Today” button.                            |
-| `disabledDatesFn`     | `(date: Date) => boolean`                                                                                                                                                                  | —              | Function to disable dates dynamically.                                                            |
-| `mode`                | `popover` \| `inline`                                                                                                                                                                      | `"popover"`    | Controls the calendar's display style: as a popover or inline element.                            |
-| `theme`               | `light` \| `dark`                                                                                                                                                                          | `"light"`      | Sets the calendar's color scheme to either light or dark mode.                                    |
-| `initialView`         | `"day" \| "month" \| "year"`                                                                                                                                                               | `"day"`        | Determines which view is shown when the calendar first loads.                                     |
-| `views`               | `"day" \| "month" \| "year"`                                                                                                                                                               | `"day"`        | Specifies which views users can switch between. Must include initialView.                         |
-| `anchorEl`            | `HTMLElement \| null`                                                                                                                                                                      | `null`         | The DOM element that serves as the anchor point for positioning the calendar.                     |
-| `position`            | `"top" \| "right" \| "bottom" \| "left" \| "start" \| "end" \| "top-right" \| "top-left" \| "top-start" \| "top-end" \| "bottom-right" \| "bottom-left" \| "bottom-start" \| "bottom-end"` | `"bottom"`     | Specifies the calendar's placement relative to the anchor element.                                |
-| `locale`              | `string`                                                                                                                                                                                   | `"en"`         | Moment.js locale (e.g. `"ar"`, `"ar-sa"`, `"en-gb"`).                                             |
-| `format`              | `string`                                                                                                                                                                                   | `"YYYY/MM/DD"` | Specifies the format pattern used to display and interpret dates.                                 |
-| `calendar`            | `gregorian` \| `hijri`                                                                                                                                                                     | `"gregorian"`  | Specifies the calendar system used for date calculations and display.                             |
-| `onClose`             | `() => void`                                                                                                                                                                               | —              | Callback invoked when the calendar is closed (e.g., clicking outside or selecting a date).        |
-| `daysCalendarProps`   | [`DaysCalendarProps`](#days-calendar-props)                                                                                                                                                | —              | An object containing props that customize the rendering and behavior of the days calendar view.   |
-| `monthsCalendarProps` | [`MonthsCalendarProps`](#months-calendar-props)                                                                                                                                            | —              | An object containing props that customize the rendering and behavior of the months calendar view. |
-| `yearsCalendarProps`  | [`YearsCalendarProps`](#years-calendar-props)                                                                                                                                              | —              | An object containing props that customize the rendering and behavior of the years calendar view.  |
+| Prop                  | Type                                                                                                                                                                                       | Default        | Description                                                                                                                                      |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `open`                | `boolean`                                                                                                                                                                                  | `false`        | Determines whether the calendar or picker is currently visible.                                                                                  |
+| `value`               | `Date \| Moment \| null`                                                                                                                                                                   | `null`         | The currently selected date.                                                                                                                     |
+| `initialDate`         | `Date \| Moment \| null`                                                                                                                                                                   | `null`         | The date the calendar initially focuses on when rendered.                                                                                        |
+| `onSelect`            | `(date: Date \| null) => void`                                                                                                                                                             | —              | Callback fired when a date is selected.                                                                                                          |
+| `disablePortal`       | `boolean`                                                                                                                                                                                  | `false`        | If true, renders the calendar/popover inline instead of using a portal.                                                                          |
+| `enableGoToToday`     | `boolean`                                                                                                                                                                                  | —              | If true, displays a button that navigates the calendar to today’s date.                                                                          |
+| `hideFooter`          | `boolean`                                                                                                                                                                                  | —              | Toggles visibility of the component’s footer.                                                                                                    |
+| `disableLocaleDigits` | `boolean`                                                                                                                                                                                  | —              | Forces numeric display to use English digits, even in locales like Arabic that default to locale-specific numerals (e.g. Hindi or Arabic-Indic). |
+| `renderGoToToday`     | `(onClick: () => void) => ReactNode`                                                                                                                                                       | —              | A function that returns a custom element for the “Go to Today” button. Receives an `onClick` handler to trigger the default behavior.            |
+| `renderConfirmBtn`    | `(onClick: () => void) => ReactNode`                                                                                                                                                       | —              | A function that returns a custom element for the “OK” button. Receives an `onClick` handler to trigger the default behavior.                     |
+| `disabledDatesFn`     | `(date: Date) => boolean`                                                                                                                                                                  | —              | Function to disable dates dynamically.                                                                                                           |
+| `mode`                | `popover` \| `inline`                                                                                                                                                                      | `"popover"`    | Controls the calendar's display style: as a popover or inline element.                                                                           |
+| `theme`               | `light` \| `dark`                                                                                                                                                                          | `"light"`      | Sets the calendar's color scheme to either light or dark mode.                                                                                   |
+| `initialView`         | `"day" \| "month" \| "year"`                                                                                                                                                               | `"day"`        | Determines which view is shown when the calendar first loads.                                                                                    |
+| `views`               | `"day" \| "month" \| "year"`                                                                                                                                                               | `"day"`        | Specifies which views users can switch between. Must include initialView.                                                                        |
+| `anchorEl`            | `HTMLElement \| null`                                                                                                                                                                      | `null`         | The DOM element that serves as the anchor point for positioning the calendar.                                                                    |
+| `position`            | `"top" \| "right" \| "bottom" \| "left" \| "start" \| "end" \| "top-right" \| "top-left" \| "top-start" \| "top-end" \| "bottom-right" \| "bottom-left" \| "bottom-start" \| "bottom-end"` | `"bottom"`     | Specifies the calendar's placement relative to the anchor element.                                                                               |
+| `locale`              | `string`                                                                                                                                                                                   | `"en"`         | Moment.js locale (e.g. `"ar"`, `"ar-sa"`, `"en-gb"`).                                                                                            |
+| `format`              | `string`                                                                                                                                                                                   | `"YYYY/MM/DD"` | Specifies the format pattern used to display and interpret dates.                                                                                |
+| `calendar`            | `gregorian` \| `hijri`                                                                                                                                                                     | `"gregorian"`  | Specifies the calendar system used for date calculations and display.                                                                            |
+| `onClose`             | `() => void`                                                                                                                                                                               | —              | Callback invoked when the calendar is closed (e.g., clicking outside or selecting a date).                                                       |
+| `daysCalendarProps`   | [`DaysCalendarProps`](#days-calendar-props)                                                                                                                                                | —              | An object containing props that customize the rendering and behavior of the days calendar view.                                                  |
+| `monthsCalendarProps` | [`MonthsCalendarProps`](#months-calendar-props)                                                                                                                                            | —              | An object containing props that customize the rendering and behavior of the months calendar view.                                                |
+| `yearsCalendarProps`  | [`YearsCalendarProps`](#years-calendar-props)                                                                                                                                              | —              | An object containing props that customize the rendering and behavior of the years calendar view.                                                 |
+| `timePickerProps`     | [`TimePickerProps`](#time-picker-props)                                                                                                                                                    | —              | An object containing props that customize the rendering and behavior of the time picker.                                                         |
 
 ---
 
 ## Days Calendar Props
 
-| Prop               | Type                                             | Default   | Description                                                                     |
-| ------------------ | ------------------------------------------------ | --------- | ------------------------------------------------------------------------------- |
-| `firstDayOfWeek`   | `0-6`                                            | `0` (Sun) | Sets the first day of the week.                                                 |
-| `hideOutsideDays`  | `boolean`                                        | —         | Controls whether days outside the current month are shown in the calendar grid. |
-| `showWeeksNumber`  | `boolean`                                        | —         | Determines whether to show the week number for each row in the calendar grid.   |
-| `highlightDates`   | `(Date \| Moment)[]`                             | —         | A list of dates to be visually highlighted in the calendar.                     |
-| `disabledDates`    | `(Date \| Moment)[]`                             | —         | Array of Date objects that should be disabled in the calendar.                  |
-| `disabledMonths`   | `(Date \| Moment)[]`                             | —         | Array of objects specifying which months to disable.                            |
-| `disabledYears`    | `(Date \| Moment)[]`                             | —         | Array of years to disable in the calendar.                                      |
-| `weekends`         | `(Date \| Moment)[]`                             | —         | Controls the visibility, styling, or behavior of weekend days in the calendar.  |
-| `disableWeekends`  | `boolean`                                        | —         | Disables selection of weekend days in the calendar.                             |
-| `renderDay`        | `(date: Date) => ReactNode`                      | —         | A function that returns a custom element for each day cell in the calendar.     |
-| `renderWeekNumber` | `(weekNumber: number \| undefined) => ReactNode` | —         | A function that returns a custom element for each week number in the calendar.  |
-| `disabledDatesFn`  | `(date: Date) => boolean`                        | —         | Function to disable dates dynamically.                                          |
-| `onSelect`         | `(date: Date) => void`                           | —         | Called when a user clicks a day; receives the clicked date as a Date object.    |
+| Prop               | Type                                                                                                     | Default   | Description                                                                     |
+| ------------------ | -------------------------------------------------------------------------------------------------------- | --------- | ------------------------------------------------------------------------------- |
+| `firstDayOfWeek`   | `0-6`                                                                                                    | `0` (Sun) | Sets the first day of the week.                                                 |
+| `hideOutsideDays`  | `boolean`                                                                                                | —         | Controls whether days outside the current month are shown in the calendar grid. |
+| `showWeeksNumber`  | `boolean`                                                                                                | —         | Determines whether to show the week number for each row in the calendar grid.   |
+| `highlightDates`   | `(Date \| Moment)[]`                                                                                     | —         | A list of dates to be visually highlighted in the calendar.                     |
+| `disabledDates`    | `(Date \| Moment)[]`                                                                                     | —         | Array of Date objects that should be disabled in the calendar.                  |
+| `disabledMonths`   | `(Date \| Moment)[]`                                                                                     | —         | Array of objects specifying which months to disable.                            |
+| `disabledYears`    | `(Date \| Moment)[]`                                                                                     | —         | Array of years to disable in the calendar.                                      |
+| `weekends`         | `(Date \| Moment)[]`                                                                                     | —         | Controls the visibility, styling, or behavior of weekend days in the calendar.  |
+| `disableWeekends`  | `boolean`                                                                                                | —         | Disables selection of weekend days in the calendar.                             |
+| `renderDay`        | `(renderedValue: string, date: Date, , options: `[RenderDayOptions](#render-day-options)`) => ReactNode` | —         | A function that returns a custom element for each day cell in the calendar.     |
+| `renderWeekNumber` | `(weekNumber: string) => ReactNode`                                                                      | —         | A function that returns a custom element for each week number in the calendar.  |
+| `disabledDatesFn`  | `(date: Date) => boolean`                                                                                | —         | Function to disable dates dynamically.                                          |
+| `onSelect`         | `(date: Date) => void`                                                                                   | —         | Called when a user clicks a day; receives the clicked date as a Date object.    |
 
 ---
 
@@ -304,6 +299,23 @@ You can override CSS variables in your styles:
 | `renderYear`      | `(date: Date) => ReactNode` | —       | A function that returns a custom element for each year cell in the calendar.  |
 | `disabledDatesFn` | `(date: Date) => boolean`   | —       | Function to disable dates dynamically.                                        |
 | `onSelect`        | `(date: Date) => void`      | —       | Called when a user clicks a year; receives the clicked date as a Date object. |
+
+---
+
+## Time Picker Props
+
+| Prop                | Type                                    | Default | Description                                                                                                                   |
+| ------------------- | --------------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `is12h`             | `boolean`                               | —       | Toggles between 12-hour (AM/PM) and 24-hour time formats; set to true for 12-hour display.                                    |
+| `showScrollbars`    | `boolean`                               | —       | Determines visibility of scrollbars for hours, minutes, and second.                                                           |
+| `selectOnScrolling` | `boolean`                               | —       | Automatically selects the middle value while scrolling hours, minutes, seconds, or meridiem for smoother interaction.         |
+| `visibleColumns`    | `('hours' \| 'minutes' \| 'seconds')[]` | —       | Specifies which time units to display in the picker; choose any combination of 'hours', 'minutes', and 'seconds'.             |
+| `disabledHours`     | `number[]`                              | —       | An array of hour values (0–23) that are disabled in the picker, preventing selection of those times.                          |
+| `disabledMinutes`   | `number[]`                              | —       | An array of minutes values (0–59) that are disabled in the picker, preventing selection of those times.                       |
+| `disabledSeconds`   | `number[]`                              | —       | An array of seconds values (0–59) that are disabled in the picker, preventing selection of those times.                       |
+| `disabledMeridiem`  | `string[]`                              | —       | An array of meridiem values (AM - am - ص - PM - pm - م) that are disabled in the picker, preventing selection of those times. |
+| .                   |
+| `onSelect`          | `(date: Date) => void`                  | —       | Called when a user clicks an hour, minute, second, or meridiem; receives the clicked date as a Date object.                                                 |
 
 ---
 

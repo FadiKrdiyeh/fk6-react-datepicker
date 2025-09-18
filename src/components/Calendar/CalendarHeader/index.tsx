@@ -1,11 +1,9 @@
 import { type Moment } from 'moment-hijri';
-import { useMemo, type FC } from 'react';
+import { useMemo, type FC, type ReactNode } from 'react';
 
 import { MOMENT_MAX_SUPPORTED_DATE, MOMENT_MIN_SUPPORTED_DATE } from '../../../utils/constants.js';
 import { CalendarsEnum, CalendarViewsEnum, GregorianFormatsEnum, HijriFormatsEnum } from '../../../utils/enums.js';
 import { clsx } from '../../../utils/stringHelpers.js';
-
-// const DEFAULT_VIEW: `${CalendarViewsEnum}` = CalendarViewsEnum.Days;
 
 export interface CalendarHeaderProps {
     currentDate: Moment;
@@ -14,7 +12,11 @@ export interface CalendarHeaderProps {
     yearsRange?: number | undefined;
     calendarEl?: HTMLElement | null | undefined;
     views?: `${CalendarViewsEnum}`[] | undefined;
-    onMonthClick?: () => void;
+    disableLocaleDigits?: boolean | undefined;
+    renderPrevButton?: (options: { disabled: boolean, onClick: () => void }) => ReactNode;
+    renderNextButton?: (options: { disabled: boolean, onClick: () => void }) => ReactNode;
+    renderSelectedMonth?: (renderedValue: string, date: Date, options: { opened: boolean, onClick: () => void }) => ReactNode;
+    renderSelectedYear?: (renderedValue: string, date: Date, options: { opened: boolean, onClick: () => void }) => ReactNode;
     onChangeView?: (view: `${CalendarViewsEnum}`) => void;
     onCurrentDateChange: (currentDate: Moment) => void;
 }
@@ -26,6 +28,11 @@ export const CalendarHeader: FC<CalendarHeaderProps> = ({
     yearsRange = 12,
     calendarEl,
     views,
+    disableLocaleDigits,
+    renderPrevButton,
+    renderNextButton,
+    renderSelectedMonth,
+    renderSelectedYear,
     onChangeView,
     onCurrentDateChange,
 }) => {
@@ -109,48 +116,60 @@ export const CalendarHeader: FC<CalendarHeaderProps> = ({
                 break;
         }
     }
+
+    const currentYear = useMemo(() => disableLocaleDigits ? (isHijri ? currentDate.iYear().toString() : currentDate.year().toString()) : currentDate.format(formats.FullYear), [currentDate, isHijri]);
+    const currentMonth = useMemo(() => currentDate.format(formats.FullMonth), [currentDate]);
+
     return (
         <div className="fkdp-calendar__header">
-            <button
-                className={clsx({
-                    "fkdp-calendar__btn": true,
-                    "fkdp-calendar__btn-prev": true,
-                    "fkdp-calendar__btn--disabled": !isPrevButtonEnabled,
-                })}
-                disabled={!isPrevButtonEnabled}
-                type="button"
-                aria-label="Previous"
-                style={{ transform: isRTL ? 'rotate(180deg)' : undefined }}
-                onClick={handlePrevPage}
-            >
-                ◀
-            </button>
+            {!!renderPrevButton ? renderPrevButton({ disabled: !isPrevButtonEnabled, onClick: () => handlePrevPage() }) : (
+                <button
+                    className={clsx({
+                        "fkdp-calendar__btn": true,
+                        "fkdp-calendar__btn-prev": true,
+                        "fkdp-calendar__btn--disabled": !isPrevButtonEnabled,
+                    })}
+                    disabled={!isPrevButtonEnabled}
+                    type="button"
+                    aria-label="Previous"
+                    style={{ transform: isRTL ? 'rotate(180deg)' : undefined }}
+                    onClick={handlePrevPage}
+                >
+                    ◀
+                </button>
+            )}
             {(isYearsEnabled) && (
-                <span style={{
-                    cursor: (isMonthsEnabled || isDaysEnabled) ? 'pointer' : undefined,
-                    fontWeight: (view === CalendarViewsEnum.Years) ? 'bold' : undefined,
-                }} onClick={handleYearClick}>{currentDate.format(formats.FullYear)}</span>
+                !!renderSelectedYear ? renderSelectedYear(currentYear, currentDate.toDate(), { opened: view === CalendarViewsEnum.Years, onClick: () => handleYearClick() }) : (
+                    <span style={{
+                        cursor: (isMonthsEnabled || isDaysEnabled) ? 'pointer' : undefined,
+                        fontWeight: (view === CalendarViewsEnum.Years) ? 'bold' : undefined,
+                    }} onClick={handleYearClick}>{currentYear}</span>
+                )
             )}
             {(isMonthsEnabled) && (
-                <span style={{
-                    cursor: (isYearsEnabled || isDaysEnabled) ? 'pointer' : undefined,
-                    fontWeight: (view === CalendarViewsEnum.Months) ? 'bold' : undefined,
-                }} onClick={handleMonthClick}>{currentDate.format(formats.FullMonth)}</span>
+                !!renderSelectedMonth ? renderSelectedMonth(currentMonth, currentDate.toDate(), { opened: view === CalendarViewsEnum.Months, onClick: () => handleMonthClick() }) : (
+                    <span style={{
+                        cursor: (isYearsEnabled || isDaysEnabled) ? 'pointer' : undefined,
+                        fontWeight: (view === CalendarViewsEnum.Months) ? 'bold' : undefined,
+                    }} onClick={handleMonthClick}>{currentMonth}</span>
+                )
             )}
-            <button
-                className={clsx({
-                    "fkdp-calendar__btn": true,
-                    "fkdp-calendar__btn-prev": true,
-                    "fkdp-calendar__btn--disabled": !isNextButtonEnabled,
-                })}
-                disabled={!isNextButtonEnabled}
-                type="button"
-                aria-label="Next"
-                style={{ transform: isRTL ? 'rotate(180deg)' : undefined }}
-                onClick={handleNextPage}
-            >
-                ▶
-            </button>
+            {!!renderPrevButton ? renderPrevButton({ disabled: !isNextButtonEnabled, onClick: () => handleNextPage() }) : (
+                <button
+                    className={clsx({
+                        "fkdp-calendar__btn": true,
+                        "fkdp-calendar__btn-prev": true,
+                        "fkdp-calendar__btn--disabled": !isNextButtonEnabled,
+                    })}
+                    disabled={!isNextButtonEnabled}
+                    type="button"
+                    aria-label="Next"
+                    style={{ transform: isRTL ? 'rotate(180deg)' : undefined }}
+                    onClick={handleNextPage}
+                >
+                    ▶
+                </button>
+            )}
         </div>
     )
 }

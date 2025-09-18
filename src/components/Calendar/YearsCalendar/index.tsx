@@ -1,7 +1,7 @@
 import moment, { type Moment } from 'moment-hijri';
 import { useMemo, type FC, type ReactNode } from 'react';
 
-import { getLocalizedMomentDate } from '../../../utils/dateHelpers.js';
+import { extractTimeParts, getLocalizedMomentDate } from '../../../utils/dateHelpers.js';
 import { CalendarsEnum, CalendarViewsEnum, GregorianFormatsEnum, HijriFormatsEnum } from '../../../utils/enums.js';
 import { clsx } from '../../../utils/stringHelpers.js';
 
@@ -15,12 +15,13 @@ interface AllYearsCalendarProps {
     range?: number | undefined;
     disabledYears?: (Date | Moment)[] | undefined; // mark specific dates disabled
     locale?: string | undefined;
+    disableLocaleDigits?: boolean | undefined;
     disabledDatesFn?: ((date: Date, view: `${CalendarViewsEnum}`) => boolean) | undefined; // mark specific dates disabled
-    renderYear?: (date: Date) => ReactNode; // custom renderer for day cells
+    renderYear?: (renderedValue: string, date: Date, options: { selected: boolean, disabled: boolean, today: boolean, focused: boolean, onClick: () => void }) => ReactNode; // custom renderer for day cells
     onSelect?: (date: Date) => void;
 }
 
-export type YearsCalendarProps = Omit<AllYearsCalendarProps, "minDate" | "maxDate" | "value" | "calendar" | "focusedDate" | "locale">
+export type YearsCalendarProps = Omit<AllYearsCalendarProps, "minDate" | "maxDate" | "value" | "calendar" | "focusedDate" | "locale" | "disableLocaleDigits">
 
 export const YearsCalendar: FC<AllYearsCalendarProps> = ({
     value,
@@ -32,6 +33,7 @@ export const YearsCalendar: FC<AllYearsCalendarProps> = ({
     range = 16,
     disabledYears,
     locale,
+    disableLocaleDigits,
     disabledDatesFn,
     renderYear,
     onSelect,
@@ -39,7 +41,6 @@ export const YearsCalendar: FC<AllYearsCalendarProps> = ({
     const isHijri = calendar === CalendarsEnum.Hijri;
     const formats = isHijri ? HijriFormatsEnum : GregorianFormatsEnum;
 
-    // // Generate all days for the month grid (including leading/trailing padding)
     const calendarYears = useMemo(() => {
         const years: Moment[] = [];
         const yearNumber = isHijri ? currentDate.iYear() : currentDate.year();
@@ -62,8 +63,8 @@ export const YearsCalendar: FC<AllYearsCalendarProps> = ({
     const isDateDisabled = (date: Moment) => {
         return (
             !date.isBetween(minDate, maxDate, "year", "[]")
-            || disabledDatesFn?.(date.toDate(), CalendarViewsEnum.Years)
-            || momentDisabledYears?.some(d => d.isSame(date, "year"))
+            || !!disabledDatesFn?.(date.toDate(), CalendarViewsEnum.Years)
+            || !!momentDisabledYears?.some(d => d.isSame(date, "year"))
         );
     };
 
@@ -71,37 +72,44 @@ export const YearsCalendar: FC<AllYearsCalendarProps> = ({
         if (isDateDisabled(date)) return;
 
         // [TODO] Need review...
-        if (date.isBetween(minDate, maxDate, undefined, '[]'))
-            onSelect?.(date.toDate());
-        else if (date.isBefore(minDate))
+        if (date.isBetween(minDate, maxDate, undefined, '[]')) {
+            const extractedTimeParts = extractTimeParts(currentDate, false, locale);
+            onSelect?.(date.add({ hours: extractedTimeParts?.hour || 0, minutes: extractedTimeParts?.minute || 0, seconds: extractedTimeParts?.second || 0 }).toDate());
+        } else if (date.isBefore(minDate)) {
             onSelect?.(moment(minDate).toDate());
-        else
+        } else {
             onSelect?.(moment(maxDate).toDate());
+        }
     };
 
     const renderCell = (year: Moment) => {
-        const isSelected = value && getLocalizedMomentDate(value, locale).isSame(year, "year");
+        const isSelected = !!value && getLocalizedMomentDate(value, locale).isSame(year, "year");
         const isDisabled = isDateDisabled(year);
         const isToday = getLocalizedMomentDate(undefined, locale).isSame(year, "year");
+        const isFocused = year.isSame(focusedDate, "day");
+
+        const renderedYear = disableLocaleDigits ? (isHijri ? year.iYear().toString() : year.year().toString()) : year.format(formats.FullYear);
 
         return (
-            <button
-                key={year.toString()}
-                type="button"
-                className={clsx({
-                    "fkdp-calendar__cell": true,
-                    "fkdp-calendar__cell--selected": isSelected,
-                    "fkdp-calendar__cell--disabled": isDisabled,
-                    "fkdp-calendar__cell--today": isToday,
-                    "fkdp-calendar__cell--focused": year.isSame(focusedDate, "day"),
-                })}
-                onClick={() => handleYearClick(year)}
-                disabled={isDisabled}
-                tabIndex={year.isSame(focusedDate, "day") ? 0 : -1}
-                aria-selected={!!isSelected}
-            >
-                {renderYear ? renderYear(year.toDate()) : year.format(formats.FullYear)}
-            </button>
+            !!renderYear ? renderYear(renderedYear, year.toDate(), { selected: isSelected, disabled: isDisabled, today: isToday, focused: isFocused, onClick: () => handleYearClick(year) }) : (
+                <button
+                    key={year.toString()}
+                    type="button"
+                    className={clsx({
+                        "fkdp-calendar__cell": true,
+                        "fkdp-calendar__cell--selected": isSelected,
+                        "fkdp-calendar__cell--disabled": isDisabled,
+                        "fkdp-calendar__cell--today": isToday,
+                        "fkdp-calendar__cell--focused": isFocused,
+                    })}
+                    onClick={() => handleYearClick(year)}
+                    disabled={isDisabled}
+                    tabIndex={year.isSame(focusedDate, "day") ? 0 : -1}
+                    aria-selected={!!isSelected}
+                >
+                    {renderedYear}
+                </button>
+            )
         );
     };
 

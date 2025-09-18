@@ -1,6 +1,6 @@
 {
   "name": "@fk6/react-datepicker",
-  "version": "2.0.5",
+  "version": "2.1.0",
   "description": "React date picker with Hijri & Gregorian support, theming, localization, and more.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -24,8 +24,11 @@
   "keywords": [
     "react",
     "react-datepicker",
+    "react-datetimepicker",
     "datepicker",
+    "timepicker",
     "date-picker",
+    "time-picker",
     "calendar",
     "react-calendar",
     "gregorian",
@@ -35,7 +38,9 @@
     "moment",
     "moment-hijri",
     "react-date-picker",
+    "react-datetime-picker",
     "date",
+    "time",
     "picker",
     "react-component"
   ],

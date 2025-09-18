@@ -1,49 +1,183 @@
-import React, { useState } from "react";
-import moment, { type Moment } from "moment-hijri";
-// import 'moment/locale/en-gb'
-import "moment-hijri";
+import type { Moment } from "moment-hijri";
+import React, { forwardRef, useRef, useState, type ComponentProps } from "react";
 
-export interface DateTimePickerProps {
-  value?: string;
-  onChange?: (value: string) => void;
-  calendar?: "gregorian" | "hijri";
-  format?: string;
+import { useHandleMinMaxDates } from "../../hooks/useHandleMinMaxDates.js";
+import { MOMENT_MAX_SUPPORTED_DATE, MOMENT_MIN_SUPPORTED_DATE } from "../../utils/constants.js";
+import { fixSupportedDate } from "../../utils/dateHelpers.js";
+import { CalendarsEnum, GregorianFormatsEnum, HijriFormatsEnum, ThemesEnum } from "../../utils/enums.js";
+import { clsx } from "../../utils/stringHelpers.js";
+import { Calendar, type CalendarProps } from "../Calendar/index.js";
+import { DateField, type DateFieldExtraProps, type DateFieldProps } from "../DateField/index.js";
+
+import "../../scss/components/datepicker.scss";
+
+export interface DateTimePickerProps extends Omit<ComponentProps<'div'>, 'defaultValue' | 'onChange'> {
+	value?: Date | Moment | null;              // controlled selected date
+	defaultValue?: Date | Moment | null;       // uncontrolled
+	open?: boolean;                   // controlled open state
+	defaultOpen?: boolean;            // uncontrolled
+	format?: string;                  // date format for input
+	placeholder?: string;
+	minDate?: Date | Moment;
+	maxDate?: Date | Moment;
+	locale?: string;
+	disabled?: boolean;
+	readOnly?: boolean;
+	closeOnSelect?: boolean;          // default true
+	name?: string;                    // for hidden input
+	calendar?: `${CalendarsEnum}`;
+	initialDate?: Date | Moment;
+	theme?: `${ThemesEnum}`;
+	calendarProps?: Partial<CalendarProps>;
+	fieldProps?: Partial<DateFieldProps>;
+	renderInput?: (dateFieldProps: DateFieldExtraProps) => React.ReactNode;
+	renderCalendar?: (props: CalendarProps) => React.ReactNode;
+	onChange?: (date: Date | null) => void;
+	onOpenChange?: (open: boolean) => void;
 }
 
-export const DateTimePicker: React.FC<DateTimePickerProps> = (props) => {
-  const initial = props.value
-    ? moment(
-      props.value,
-      props.format ||
-      (props.calendar === "hijri" ? "iYYYY/iMM/iDD" : undefined)
-    )
-    : moment();
+export const DateTimePicker: React.FC<DateTimePickerProps> = forwardRef(({
+	value,
+	defaultValue = null,
+	open,
+	defaultOpen = false,
+	format,
+	placeholder,
+	minDate: _minDate,
+	maxDate: _maxDate,
+	locale,
+	disabled = false,
+	readOnly = false,
+	closeOnSelect = true,
+	name,
+	calendar,
+	initialDate,
+	theme = "light",
+	calendarProps,
+	fieldProps,
+	onChange,
+	onOpenChange,
+	renderInput,
+	renderCalendar,
+	...datepickerProps
+}, ref) => {
+	useHandleMinMaxDates(_minDate, _maxDate);
+	const isControlledValue = value !== undefined;
+	const isControlledOpen = open !== undefined;
+	const minDate = fixSupportedDate(_minDate, locale) ?? MOMENT_MIN_SUPPORTED_DATE.toDate();
+	const maxDate = fixSupportedDate(_maxDate, locale) ?? MOMENT_MAX_SUPPORTED_DATE.toDate();
+	const isHijri = calendar === CalendarsEnum.Hijri;
+	const formats = isHijri ? HijriFormatsEnum : GregorianFormatsEnum;
+	const dateFormat = format ?? formats.FullDateTime;
 
-  const [date, setDate] = useState<Moment>(initial);
+	const [internalValue, setInternalValue] = useState<Date | Moment | null>(defaultValue);
+	const [anchorEl, setAnchorEl] = useState<any>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    const m =
-      props.calendar === "hijri" ? moment(val, "iYYYY/iMM/iDD") : moment(val);
+	const fieldRef = useRef<HTMLInputElement>(null);
 
-    if (m.isValid()) {
-      setDate(m);
-      props.onChange?.(
-        m.format(
-          props.format ||
-          (props.calendar === "hijri" ? "iYYYY/iMM/iDD" : "YYYY-MM-DD HH:mm")
-        )
-      );
-    }
-  };
+	const selectedDate = isControlledValue ? value : internalValue;
+	const isOpen = isControlledOpen ? open : !!anchorEl;
 
-  return (
-    <div className="datetime-picker">
-      <input
-        type="text"
-        value={date.format(props.format || (props.calendar === "hijri" ? "iYYYY/iMM/iDD" : "YYYY-MM-DD HH:mm"))}
-        onChange={handleChange}
-      />
-    </div>
-  );
-};
+	// Handle open state
+	const handleOpen = (state: boolean) => {
+		if (!isControlledOpen) setAnchorEl(state ? fieldRef.current : null);
+		onOpenChange?.(state);
+	};
+
+	const handleSelect = (date: Date, close?: boolean) => {
+		if (!isControlledValue) setInternalValue(date);
+		onChange?.(date);
+		if (closeOnSelect && close) handleOpen(false);
+		fieldRef.current?.focus();
+	};
+
+	const handleFieldOpenRequest = () => {
+		if (!disabled && !readOnly)
+			handleOpen(true);
+	};
+
+	// Render input
+	const inputElement = renderInput ? (
+		renderInput({
+			value: selectedDate,
+			format: dateFormat,
+			ref: fieldRef,
+			readOnly,
+			disabled,
+			placeholder,
+			onOpenRequest: handleFieldOpenRequest,
+			onChange: (d: Date | null) => {
+				if (!isControlledValue) setInternalValue(d);
+				onChange?.(d);
+			},
+		})
+	) : (
+		<DateField
+			{...fieldProps}
+			ref={fieldRef}
+			value={selectedDate}
+			format={dateFormat}
+			placeholder={placeholder || ''}
+			disabled={disabled}
+			readOnly={readOnly}
+			locale={locale}
+			disableLocaleDigits={calendarProps?.disableLocaleDigits}
+			onOpenRequest={handleFieldOpenRequest}
+			onChange={(d) => {
+				if (!isControlledValue) setInternalValue(d);
+				onChange?.(d);
+			}}
+		/>
+	);
+
+	// Render calendar
+	const calendarElement = renderCalendar ? (
+		renderCalendar({
+			value: selectedDate,
+			minDate,
+			maxDate,
+			locale,
+			onSelect: handleSelect,
+			...calendarProps,
+		})
+	) : (
+		<Calendar
+			{...calendarProps}
+			showTimePicker
+			dir={datepickerProps.dir}
+			theme={theme}
+			isControlled={isControlledOpen}
+			open={isOpen}
+			anchorEl={anchorEl}
+			value={selectedDate}
+			minDate={minDate}
+			maxDate={maxDate}
+			locale={locale}
+			calendar={calendar}
+			initialDate={initialDate}
+			disableLocaleDigits={calendarProps?.disableLocaleDigits}
+			onSelect={handleSelect}
+			onClose={() => handleOpen(false)}
+		/>
+	);
+
+	return (
+		<div
+			{...datepickerProps}
+			ref={ref}
+			className={clsx({
+				"fkdp-datepicker": true,
+				[datepickerProps.className || '']: !!datepickerProps.className,
+				"fkdp-datepicker__dark": theme === "dark",
+			})}
+		>
+			{inputElement}
+
+			{(isOpen || calendarProps?.mode === "inline") && calendarElement}
+
+			{(name && selectedDate) && (
+				<input type="hidden" name={name} value={selectedDate.toISOString()} />
+			)}
+		</div>
+	);
+});
