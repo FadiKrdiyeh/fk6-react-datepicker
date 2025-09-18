@@ -154,7 +154,7 @@ export const CalendarHeader: FC<CalendarHeaderProps> = ({
                     }} onClick={handleMonthClick}>{currentMonth}</span>
                 )
             )}
-            {!!renderPrevButton ? renderPrevButton({ disabled: !isNextButtonEnabled, onClick: () => handleNextPage() }) : (
+            {!!renderNextButton ? renderNextButton({ disabled: !isNextButtonEnabled, onClick: () => handleNextPage() }) : (
                 <button
                     className={clsx({
                         "fkdp-calendar__btn": true,

@@ -19,7 +19,7 @@ export interface DateFieldExtraProps {
     readOnly?: boolean;
     placeholder?: string | undefined;
     disableLocaleDigits?: boolean | undefined;
-    renderIcon?: () => ReactNode;
+    renderIcon?: (onClick: () => void) => ReactNode;
     onChange?: (date: Date | null) => void;
     onInputChange?: (raw: string) => void;
     onOpenRequest?: (e?: MouseEvent | HTMLElement | boolean | null) => void;       // e.g. when user clicks icon or presses key
@@ -187,7 +187,7 @@ export const DateField = forwardRef<HTMLInputElement, DateFieldInputExtraProps>(
                     disabled={inputProps.disabled}
                     onClick={() => onOpenRequest?.(inputRef.current)}
                 >
-                    {!!renderIcon ? renderIcon() : '📅'}
+                    {!!renderIcon ? renderIcon(() => onOpenRequest?.(inputRef.current)) : '📅'}
                 </button>
             )}
         </div>

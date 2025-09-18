@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FC, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ComponentProps, type CSSProperties, type FC, type HTMLAttributes, type ReactNode } from "react";
 
 import { clsx } from "../../../../utils/stringHelpers.js";
 import moment from "moment-hijri";
@@ -17,7 +17,7 @@ type ScrollColumnProps = {
     showScrollbars?: boolean | undefined;
     selectOnScrolling?: boolean | undefined;
     disableLocaleDigits?: boolean | undefined;
-    renderItem?: ((renderedValue: string, item: number | string, options: { selected: boolean, disabled: boolean, onClick: () => void }) => ReactNode) | undefined
+    renderTimeItem?: ((renderedValue: string, item: number | string, props: HTMLAttributes<any>, state: { selected: boolean, disabled: boolean }) => ReactNode) | undefined
     onSelect: (val: any) => void;
 };
 
@@ -29,7 +29,7 @@ export const ScrollColumn: FC<ScrollColumnProps> = ({
     showScrollbars,
     selectOnScrolling,
     disableLocaleDigits,
-    renderItem,
+    renderTimeItem,
     onSelect,
 }) => {
     const scrollRef = useRef<HTMLDivElement>(null);
@@ -77,19 +77,21 @@ export const ScrollColumn: FC<ScrollColumnProps> = ({
         const isDisabled = !!disabledItems?.includes(item);
 
         const renderedItem = typeof item === 'number' ? (disableLocaleDigits ? String(item).padStart(2, "0") : moment.localeData(locale).postformat(String(item).padStart(2, "0"))) : item;
+        const styles = { height: ITEM_HEIGHT, width: '100%' };
+        const className = clsx({
+            "fkdp-calendar__time-item": true,
+            "fkdp-calendar__time-item--selected": isSelected,
+            "fkdp-calendar__time-item--disabled": isDisabled,
+        });
 
         return (
-            !!renderItem ? renderItem(renderedItem, item, { selected: isSelected, disabled: isDisabled, onClick: () => onSelect(item) }) : (
+            !!renderTimeItem ? renderTimeItem(renderedItem, item, { className, style: styles, onClick: () => onSelect(item) }, { selected: isSelected, disabled: isDisabled }) : (
                 <button
                     key={item.toString()}
-                    className={clsx({
-                        "fkdp-calendar__time-item": true,
-                        "fkdp-calendar__time-item--selected": isSelected,
-                        "fkdp-calendar__time-item--disabled": isDisabled,
-                    })}
+                    className={className}
                     disabled={disabledItems?.includes(item)}
                     // style={{ height: ITEM_HEIGHT, width: typeof item === 'string' ? '100%' : undefined }}
-                    style={{ height: ITEM_HEIGHT, width: '100%' }}
+                    style={styles}
                     onClick={() => onSelect(item)}
                 >
                     {renderedItem}
@@ -98,24 +100,24 @@ export const ScrollColumn: FC<ScrollColumnProps> = ({
         )
     }
 
-    return (
-        <div
-            ref={scrollRef}
-            className="fkdp-calendar__time-col"
-            style={{
-                height: CONTAINER_HEIGHT,
-                minWidth: ITEM_WIDTH,
-                scrollbarWidth: showScrollbars ? 'thin' : 'none',
-            }}
-            onScroll={selectOnScrolling ? handleScroll : undefined}
-        >
-            {/* Top padding */}
-            <div style={{ height: ITEM_HEIGHT * MIDDLE_INDEX }} />
+return (
+    <div
+        ref={scrollRef}
+        className="fkdp-calendar__time-col"
+        style={{
+            height: CONTAINER_HEIGHT,
+            minWidth: ITEM_WIDTH,
+            scrollbarWidth: showScrollbars ? 'thin' : 'none',
+        }}
+        onScroll={selectOnScrolling ? handleScroll : undefined}
+    >
+        {/* Top padding */}
+        <div style={{ height: ITEM_HEIGHT * MIDDLE_INDEX }} />
 
-            {items.map((item) => renderCell(item))}
+        {items.map((item) => renderCell(item))}
 
-            {/* Bottom padding */}
-            <div style={{ height: ITEM_HEIGHT * MIDDLE_INDEX }} />
-        </div>
-    );
+        {/* Bottom padding */}
+        <div style={{ height: ITEM_HEIGHT * MIDDLE_INDEX }} />
+    </div>
+);
 }

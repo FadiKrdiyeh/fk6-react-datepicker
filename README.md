@@ -169,6 +169,51 @@ This `DatePicker` allow you to render your own custom input component (`MyCustom
 
 ---
 
+### Customize Cells
+
+You can customize how individual cells are rendered in the date and time picker using render props like `renderDay`, `renderMonth`, `renderYear` or `renderTimeItem` and more. Each render function receives useful context including the formatted renderedValue, the associated date, a props object containing default HTML attributes like className, style, and event handlers, and a state object with metadata such as selected, disabled, focused, etc... This allows you to return custom JSX while preserving or extending the default behavior and styling—perfect for adding icons, conditional formatting, tooltips, or fully personalized UI elements, making it easy to tailor the picker to your design needs. There's an example for customizing days, months, years, time cells
+
+```tsx
+<DateTimePicker
+  calendarProps={{
+    daysCalendarProps: {
+      renderDay: (renderedValue, date, props, state) => (
+        <div {...props}>
+          {state.selected ? "#" : "*"}
+          {renderedValue}
+        </div>
+      ),
+    },
+    monthsCalendarProps: {
+      renderMonth: (renderedValue, date, props, state) => (
+        <div {...props}>
+          {state.selected ? "# " : "* "}
+          {renderedValue}
+          {state.selected ? " #" : " *"}
+        </div>
+      ),
+    },
+    yearsCalendarProps: {
+      renderYear: (renderedValue, date, props, state) => (
+        <div {...props}>
+          {state.selected ? ". " : "- "}
+          {renderedValue}
+          {state.selected ? " ." : " -"}
+        </div>
+      ),
+    },
+    timePickerProps: {
+      visibleColumns: ["hours"],
+      renderTimeItem: (renderedValue, date, props, state) => (
+        <div {...props}>{renderedValue}:00</div>
+      ),
+    },
+  }}
+/>
+```
+
+---
+
 ### Theming
 
 You can override CSS variables in your styles:
@@ -260,63 +305,63 @@ You can override CSS variables in your styles:
 
 ## Days Calendar Props
 
-| Prop               | Type                                                                                                       | Default   | Description                                                                     |
-| ------------------ | ---------------------------------------------------------------------------------------------------------- | --------- | ------------------------------------------------------------------------------- |
-| `firstDayOfWeek`   | `0-6`                                                                                                      | `0` (Sun) | Sets the first day of the week.                                                 |
-| `hideOutsideDays`  | `boolean`                                                                                                  | —         | Controls whether days outside the current month are shown in the calendar grid. |
-| `showWeeksNumber`  | `boolean`                                                                                                  | —         | Determines whether to show the week number for each row in the calendar grid.   |
-| `highlightDates`   | `(Date \| Moment)[]`                                                                                       | —         | A list of dates to be visually highlighted in the calendar.                     |
-| `disabledDates`    | `(Date \| Moment)[]`                                                                                       | —         | Array of Date objects that should be disabled in the calendar.                  |
-| `disabledMonths`   | `(Date \| Moment)[]`                                                                                       | —         | Array of objects specifying which months to disable.                            |
-| `disabledYears`    | `(Date \| Moment)[]`                                                                                       | —         | Array of years to disable in the calendar.                                      |
-| `weekends`         | `(Date \| Moment)[]`                                                                                       | —         | Controls the visibility, styling, or behavior of weekend days in the calendar.  |
-| `disableWeekends`  | `boolean`                                                                                                  | —         | Disables selection of weekend days in the calendar.                             |
-| `renderDay`        | `(renderedValue: string, date: Date, , options: `[`RenderDayOptions`](#render-day-options)`) => ReactNode` | —         | A function that returns a custom element for each day cell in the calendar.     |
-| `renderWeekNumber` | `(weekNumber: string) => ReactNode`                                                                        | —         | A function that returns a custom element for each week number in the calendar.  |
-| `disabledDatesFn`  | `(date: Date) => boolean`                                                                                  | —         | Function to disable dates dynamically.                                          |
-| `onSelect`         | `(date: Date) => void`                                                                                     | —         | Called when a user clicks a day; receives the clicked date as a Date object.    |
+| Prop               | Type                                                                                                                         | Default   | Description                                                                     |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------- | --------- | ------------------------------------------------------------------------------- |
+| `firstDayOfWeek`   | `0-6`                                                                                                                        | `0` (Sun) | Sets the first day of the week.                                                 |
+| `hideOutsideDays`  | `boolean`                                                                                                                    | —         | Controls whether days outside the current month are shown in the calendar grid. |
+| `showWeeksNumber`  | `boolean`                                                                                                                    | —         | Determines whether to show the week number for each row in the calendar grid.   |
+| `highlightDates`   | `(Date \| Moment)[]`                                                                                                         | —         | A list of dates to be visually highlighted in the calendar.                     |
+| `disabledDates`    | `(Date \| Moment)[]`                                                                                                         | —         | Array of Date objects that should be disabled in the calendar.                  |
+| `disabledMonths`   | `(Date \| Moment)[]`                                                                                                         | —         | Array of objects specifying which months to disable.                            |
+| `disabledYears`    | `(Date \| Moment)[]`                                                                                                         | —         | Array of years to disable in the calendar.                                      |
+| `weekends`         | `(Date \| Moment)[]`                                                                                                         | —         | Controls the visibility, styling, or behavior of weekend days in the calendar.  |
+| `disableWeekends`  | `boolean`                                                                                                                    | —         | Disables selection of weekend days in the calendar.                             |
+| `renderDay`        | `(renderedValue: string, date: Date, , props: HTMLAttributes<any>, state: `[`DayCellState`](#day-cell-state)`) => ReactNode` | —         | A function that returns a custom element for each day cell in the calendar.     |
+| `renderWeekNumber` | `(renderedValue: string, weekNumber: number) => ReactNode`                                                                   | —         | A function that returns a custom element for each week number in the calendar.  |
+| `disabledDatesFn`  | `(date: Date) => boolean`                                                                                                    | —         | Function to disable dates dynamically.                                          |
+| `onSelect`         | `(date: Date) => void`                                                                                                       | —         | Called when a user clicks a day; receives the clicked date as a Date object.    |
 
 ---
 
 ## Months Calendar Props
 
-| Prop              | Type                        | Default | Description                                                                    |
-| ----------------- | --------------------------- | ------- | ------------------------------------------------------------------------------ |
-| `disabledMonths`  | `(Date \| Moment)[]`        | —       | Array of objects specifying which months to disable.                           |
-| `disabledYears`   | `(Date \| Moment)[]`        | —       | Array of years to disable in the calendar.                                     |
-| `renderMonth`     | `(date: Date) => ReactNode` | —       | A function that returns a custom element for each month cell in the calendar.  |
-| `disabledDatesFn` | `(date: Date) => boolean`   | —       | Function to disable dates dynamically.                                         |
-| `onSelect`        | `(date: Date) => void`      | —       | Called when a user clicks a month; receives the clicked date as a Date object. |
+| Prop              | Type                                                                                                                           | Default | Description                                                                    |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------- | ------------------------------------------------------------------------------ |
+| `disabledMonths`  | `(Date \| Moment)[]`                                                                                                           | —       | Array of objects specifying which months to disable.                           |
+| `disabledYears`   | `(Date \| Moment)[]`                                                                                                           | —       | Array of years to disable in the calendar.                                     |
+| `renderMonth`     | `(renderedValue: string, date: Date, props: HTMLAttributes<any>, state: `[`MonthCellState`](#month-cell-state)`) => ReactNode` | —       | A function that returns a custom element for each month cell in the calendar.  |
+| `disabledDatesFn` | `(date: Date) => boolean`                                                                                                      | —       | Function to disable dates dynamically.                                         |
+| `onSelect`        | `(date: Date) => void`                                                                                                         | —       | Called when a user clicks a month; receives the clicked date as a Date object. |
 
 ---
 
 ## Years Calendar Props
 
-| Prop              | Type                        | Default | Description                                                                   |
-| ----------------- | --------------------------- | ------- | ----------------------------------------------------------------------------- |
-| `range`           | `number`                    | 16      | Specifies how many years should be shown in the year picker view.             |
-| `disabledYears`   | `(Date \| Moment)[]`        | —       | Array of years to disable in the calendar.                                    |
-| `renderYear`      | `(date: Date) => ReactNode` | —       | A function that returns a custom element for each year cell in the calendar.  |
-| `disabledDatesFn` | `(date: Date) => boolean`   | —       | Function to disable dates dynamically.                                        |
-| `onSelect`        | `(date: Date) => void`      | —       | Called when a user clicks a year; receives the clicked date as a Date object. |
+| Prop              | Type                                                                                                                         | Default | Description                                                                   |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------- | ----------------------------------------------------------------------------- |
+| `range`           | `number`                                                                                                                     | 16      | Specifies how many years should be shown in the year picker view.             |
+| `disabledYears`   | `(Date \| Moment)[]`                                                                                                         | —       | Array of years to disable in the calendar.                                    |
+| `renderYear`      | `(renderedValue: string, date: Date, props: HTMLAttributes<any>, state: `[`YearCellState`](#year-cell-state)`) => ReactNode` | —       | A function that returns a custom element for each year cell in the calendar.  |
+| `disabledDatesFn` | `(date: Date) => boolean`                                                                                                    | —       | Function to disable dates dynamically.                                        |
+| `onSelect`        | `(date: Date) => void`                                                                                                       | —       | Called when a user clicks a year; receives the clicked date as a Date object. |
 
 ---
 
 ## Time Picker Props
 
-| Prop                | Type                                                                                                                                   | Default | Description                                                                                                                   |
-| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `is12h`             | `boolean`                                                                                                                              | —       | Toggles between 12-hour (AM/PM) and 24-hour time formats; set to true for 12-hour display.                                    |
-| `showScrollbars`    | `boolean`                                                                                                                              | —       | Determines visibility of scrollbars for hours, minutes, and second.                                                           |
-| `selectOnScrolling` | `boolean`                                                                                                                              | —       | Automatically selects the middle value while scrolling hours, minutes, seconds, or meridiem for smoother interaction.         |
-| `visibleColumns`    | `('hours' \| 'minutes' \| 'seconds')[]`                                                                                                | —       | Specifies which time units to display in the picker; choose any combination of 'hours', 'minutes', and 'seconds'.             |
-| `disabledHours`     | `number[]`                                                                                                                             | —       | An array of hour values (0–23) that are disabled in the picker, preventing selection of those times.                          |
-| `disabledMinutes`   | `number[]`                                                                                                                             | —       | An array of minutes values (0–59) that are disabled in the picker, preventing selection of those times.                       |
-| `disabledSeconds`   | `number[]`                                                                                                                             | —       | An array of seconds values (0–59) that are disabled in the picker, preventing selection of those times.                       |
-| `disabledMeridiem`  | `string[]`                                                                                                                             | —       | An array of meridiem values (AM - am - ص - PM - pm - م) that are disabled in the picker, preventing selection of those times. |
+| Prop                | Type                                                                                                                                        | Default | Description                                                                                                                   |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `is12h`             | `boolean`                                                                                                                                   | —       | Toggles between 12-hour (AM/PM) and 24-hour time formats; set to true for 12-hour display.                                    |
+| `showScrollbars`    | `boolean`                                                                                                                                   | —       | Determines visibility of scrollbars for hours, minutes, and second.                                                           |
+| `selectOnScrolling` | `boolean`                                                                                                                                   | —       | Automatically selects the middle value while scrolling hours, minutes, seconds, or meridiem for smoother interaction.         |
+| `visibleColumns`    | `('hours' \| 'minutes' \| 'seconds')[]`                                                                                                     | —       | Specifies which time units to display in the picker; choose any combination of 'hours', 'minutes', and 'seconds'.             |
+| `disabledHours`     | `number[]`                                                                                                                                  | —       | An array of hour values (0–23) that are disabled in the picker, preventing selection of those times.                          |
+| `disabledMinutes`   | `number[]`                                                                                                                                  | —       | An array of minutes values (0–59) that are disabled in the picker, preventing selection of those times.                       |
+| `disabledSeconds`   | `number[]`                                                                                                                                  | —       | An array of seconds values (0–59) that are disabled in the picker, preventing selection of those times.                       |
+| `disabledMeridiem`  | `string[]`                                                                                                                                  | —       | An array of meridiem values (AM - am - ص - PM - pm - م) that are disabled in the picker, preventing selection of those times. |
 | .                   |
-| `renderItem`        | `(renderedValue: string, item: number \| string, options: { selected: boolean, disabled: boolean, onClick: () => void }) => ReactNode` | —       | A function that returns a custom element for each hour, minute, second and meridiem cell in the timepicker.                   |
-| `onSelect`          | `(date: Date) => void`                                                                                                                 | —       | Called when a user clicks an hour, minute, second, or meridiem; receives the clicked date as a Date object.                   |
+| `renderTimeItem`        | `(renderedValue: string, item: number \| string, props: HTMLAttributes<any>, state: { selected: boolean, disabled: boolean }) => ReactNode` | —       | A function that returns a custom element for each hour, minute, second and meridiem cell in the timepicker.                   |
+| `onSelect`          | `(date: Date) => void`                                                                                                                      | —       | Called when a user clicks an hour, minute, second, or meridiem; receives the clicked date as a Date object.                   |
 
 ---
 
@@ -332,7 +377,7 @@ You can override CSS variables in your styles:
 | `showIcon`      | `boolean`                                     | `true`         | Toggles visibility of the calendar icon in the calendar input.                                                                |
 | `readOnly`      | `boolean`                                     | —              | Prevents manual input/editing but still allows interaction (e.g. calendar popover).                                           |
 | `disabled`      | `boolean`                                     | —              | Fully disables the component—no input, no interaction, and typically styled as inactive.                                      |
-| `renderIcon`    | `() => ReactNode`                             | —              | A function that returns a custom calendar icon element, replacing the default icon.                                           |
+| `renderIcon`    | `(onClick: () => void) => ReactNode`          | —              | A function that returns a custom calendar icon element, replacing the default icon.                                           |
 | `onChange`      | `(date: Date \|null) => void`                 | —              | Called when the selected date changes. Receives the new value.                                                                |
 | `onInputChange` | `(date: Date \|null) => void`                 | —              | Called whenever the input value changes. Receives the raw string entered.                                                     |
 | `onOpenRequest` | `(e: HTMLElement \| boolean \| null) => void` | —              | Called when the calendar or popover requests to open. Useful for controlled components.                                       |

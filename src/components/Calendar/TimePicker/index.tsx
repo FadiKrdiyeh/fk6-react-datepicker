@@ -1,5 +1,5 @@
 import moment, { type Moment } from 'moment-hijri';
-import { useMemo, type FC, type ReactNode } from 'react';
+import { useMemo, type ComponentProps, type FC, type HTMLAttributes, type ReactNode } from 'react';
 
 import type { TimeParts } from '../../../types/time-parts.js';
 import { buildDateTime, extractTimeParts } from '../../../utils/dateHelpers.js';
@@ -20,7 +20,7 @@ interface AllTimePickerProps {
     disabledSeconds?: number[];
     disabledMeridiem?: string[];
     disableLocaleDigits?: boolean | undefined;
-    renderItem?: (renderedValue: string, item: number | string, options: { selected: boolean, disabled: boolean, onClick: () => void }) => ReactNode;
+    renderTimeItem?: (renderedValue: string, item: number | string, props: HTMLAttributes<any>, state: { selected: boolean, disabled: boolean }) => ReactNode;
     onSelect?: (date: Date | null) => void;
 }
 
@@ -41,7 +41,7 @@ export const TimePicker: FC<AllTimePickerProps> = ({
     disabledSeconds,
     disabledMeridiem,
     disableLocaleDigits,
-    renderItem,
+    renderTimeItem,
     onSelect,
 }) => {
     const isHoursVisible = visibleColumns === undefined || visibleColumns.includes('hours');
@@ -88,7 +88,7 @@ export const TimePicker: FC<AllTimePickerProps> = ({
                         showScrollbars={showScrollbars}
                         selectOnScrolling={selectOnScrolling}
                         disableLocaleDigits={disableLocaleDigits}
-                        renderItem={renderItem}
+                        renderTimeItem={renderTimeItem}
                         onSelect={(h) => handleChangeTime({ ...(valueTimeParts ?? defaultValue), hour: h })}
                     />
                 )}
@@ -101,7 +101,7 @@ export const TimePicker: FC<AllTimePickerProps> = ({
                         showScrollbars={showScrollbars}
                         selectOnScrolling={selectOnScrolling}
                         disableLocaleDigits={disableLocaleDigits}
-                        renderItem={renderItem}
+                        renderTimeItem={renderTimeItem}
                         onSelect={(m) => handleChangeTime({ ...(valueTimeParts ?? defaultValue), minute: m })}
                     />
                 )}
@@ -114,7 +114,7 @@ export const TimePicker: FC<AllTimePickerProps> = ({
                         showScrollbars={showScrollbars}
                         selectOnScrolling={selectOnScrolling}
                         disableLocaleDigits={disableLocaleDigits}
-                        renderItem={renderItem}
+                        renderTimeItem={renderTimeItem}
                         onSelect={(s) => handleChangeTime({ ...(valueTimeParts ?? defaultValue), second: s })}
                     />
                 )}
@@ -126,7 +126,7 @@ export const TimePicker: FC<AllTimePickerProps> = ({
                         disabledItems={disabledMeridiem?.map(m => m.toLowerCase() === 'pm' || m.toLowerCase() === 'م' ? moment.localeData(locale).meridiem(12, 0, false) : moment.localeData(locale).meridiem(0, 0, false))}
                         selectOnScrolling={selectOnScrolling}
                         selected={valueTimeParts?.meridiem}
-                        renderItem={renderItem}
+                        renderTimeItem={renderTimeItem}
                         onSelect={(ampm) => handleChangeTime({ ...(valueTimeParts ?? defaultValue), meridiem: ampm })}
                     />
                 )}

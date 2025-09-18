@@ -1,5 +1,5 @@
 import moment, { type Moment } from 'moment-hijri';
-import { useMemo, type FC, type ReactNode } from 'react';
+import { useMemo, type FC, type HTMLAttributes, type ReactNode } from 'react';
 
 import { extractTimeParts, getLocalizedMomentDate } from '../../../utils/dateHelpers.js';
 import { CalendarsEnum, CalendarViewsEnum, GregorianFormatsEnum, HijriFormatsEnum } from '../../../utils/enums.js';
@@ -15,7 +15,7 @@ interface AllMonthsCalendarProps {
     disabledMonths?: (Date | Moment)[] | undefined; // mark specific months disabled
     disabledYears?: (Date | Moment)[] | undefined; // mark specific years disabled
     focusedDate?: Moment;
-    renderMonth?: (renderedValue: string, date: Date, options: { selected: boolean, disabled: boolean, today: boolean, focused: boolean, onClick: () => void }) => ReactNode;
+    renderMonth?: (renderedValue: string, date: Date, props: HTMLAttributes<any>, state: { selected: boolean, disabled: boolean, today: boolean, focused: boolean }) => ReactNode;
     disabledDatesFn?: ((date: Date, view: `${CalendarViewsEnum}`) => boolean) | undefined;
     onSelect?: (date: Date) => void;
 }
@@ -88,23 +88,24 @@ export const MonthsCalendar: FC<AllMonthsCalendarProps> = ({
         const isFocused = month.isSame(focusedDate, "day");
 
         const renderedMonth = month.format(formats.ShortMonth);
+        const className = clsx({
+            "fkdp-calendar__cell": true,
+            "fkdp-calendar__cell--selected": isSelected,
+            "fkdp-calendar__cell--disabled": isDisabled,
+            "fkdp-calendar__cell--today": isThisMonth,
+            "fkdp-calendar__cell--focused": isFocused,
+        });
 
         return (
-            !!renderMonth ? renderMonth(renderedMonth, month.toDate(), { selected: isSelected, disabled: isDisabled, today: isThisMonth, focused: isFocused, onClick: () => handleMonthClick(month) }) : (
+            !!renderMonth ? renderMonth(renderedMonth, month.toDate(), { className, "aria-selected": !!isSelected, tabIndex: month.isSame(focusedDate, "day") ? 0 : -1, onClick: () => handleMonthClick(month) }, { selected: isSelected, disabled: isDisabled, today: isThisMonth, focused: isFocused }) : (
                 <button
                     key={month.toString()}
                     type="button"
-                    className={clsx({
-                        "fkdp-calendar__cell": true,
-                        "fkdp-calendar__cell--selected": isSelected,
-                        "fkdp-calendar__cell--disabled": isDisabled,
-                        "fkdp-calendar__cell--today": isThisMonth,
-                        "fkdp-calendar__cell--focused": isFocused,
-                    })}
-                    onClick={() => handleMonthClick(month)}
+                    className={className}
                     disabled={isDisabled}
-                    tabIndex={month.isSame(focusedDate, "day") ? 0 : -1}
                     aria-selected={!!isSelected}
+                    tabIndex={month.isSame(focusedDate, "day") ? 0 : -1}
+                    onClick={() => handleMonthClick(month)}
                 >
                     {renderedMonth}
                 </button>

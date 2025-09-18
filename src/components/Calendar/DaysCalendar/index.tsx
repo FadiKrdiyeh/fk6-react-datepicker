@@ -1,11 +1,11 @@
 import moment, { type Moment } from 'moment-hijri';
-import { Fragment, useMemo, type FC, type ReactNode } from 'react';
+import { Fragment, useMemo, type FC, type HTMLAttributes, type ReactNode } from 'react';
 
 import { extractTimeParts, getLocalizedMomentDate, weekOfHijriYear } from '../../../utils/dateHelpers.js';
 import { CalendarsEnum, CalendarViewsEnum, GregorianFormatsEnum, HijriFormatsEnum } from '../../../utils/enums.js';
 import { clsx } from '../../../utils/stringHelpers.js';
 
-type RenderDayOptions = { selected: boolean, disabled: boolean, today: boolean, highlighted: boolean, focused: boolean, holiday: boolean, outside: boolean, onClick: () => void };
+type DayCellState = { selected: boolean, disabled: boolean, today: boolean, highlighted: boolean, focused: boolean, holiday: boolean, outside: boolean };
 
 interface AllDaysCalendarProps {
     value?: Date | Moment | null;
@@ -25,7 +25,7 @@ interface AllDaysCalendarProps {
     weekends?: number[];
     disableWeekends?: boolean;
     disableLocaleDigits?: boolean | undefined;
-    renderDay?: (renderedValue: string, date: Date, options: RenderDayOptions) => ReactNode; // custom renderer for day cells
+    renderDay?: (renderedValue: string, date: Date, props: HTMLAttributes<any>, state: DayCellState) => ReactNode; // custom renderer for day cells
     renderWeekNumber?: ((renderedValue: string, weekNumber: number) => ReactNode) | undefined; // custom renderer for day cells
     disabledDatesFn?: ((date: Date, view: `${CalendarViewsEnum}`) => boolean) | undefined; // mark specific dates disabled
     onSelect: (date: Date) => void;
@@ -144,26 +144,27 @@ export const DaysCalendar: FC<AllDaysCalendarProps> = ({
         const isHoliday = !!weekends?.includes(day.day());
 
         const renderedDay = disableLocaleDigits ? (isHijri ? day.iDate().toString() : day.date().toString()) : day.format(formats.Day);
+        const className = clsx({
+            "fkdp-calendar__cell": true,
+            "fkdp-calendar__cell--selected": isSelected,
+            "fkdp-calendar__cell--disabled": isDisabled,
+            "fkdp-calendar__cell--today": isToday,
+            "fkdp-calendar__cell--highlighted": isHighlighted,
+            "fkdp-calendar__cell--focused": isFocused,
+            "fkdp-calendar__cell--holiday": isHoliday,
+            "fkdp-calendar__cell--outside": !isCurrentMonth,
+        });
 
         return (
-            !!renderDay ? renderDay(renderedDay, day.toDate(), { selected: isSelected, disabled: isDisabled, today: isToday, highlighted: isHighlighted, focused: isFocused, holiday: isHoliday, outside: !isCurrentMonth, onClick: () => handleDayClick(day) }) : (
+            !!renderDay ? renderDay(renderedDay, day.toDate(), { className, "aria-selected": !!isSelected, tabIndex: day.isSame(focusedDate, "day") ? 0 : -1, onClick: () => handleDayClick(day) }, { selected: isSelected, disabled: isDisabled, today: isToday, highlighted: isHighlighted, focused: isFocused, holiday: isHoliday, outside: !isCurrentMonth }) : (
                 <button
                     key={day.toString()}
                     type="button"
-                    className={clsx({
-                        "fkdp-calendar__cell": true,
-                        "fkdp-calendar__cell--selected": isSelected,
-                        "fkdp-calendar__cell--disabled": isDisabled,
-                        "fkdp-calendar__cell--today": isToday,
-                        "fkdp-calendar__cell--highlighted": isHighlighted,
-                        "fkdp-calendar__cell--focused": isFocused,
-                        "fkdp-calendar__cell--holiday": isHoliday,
-                        "fkdp-calendar__cell--outside": !isCurrentMonth,
-                    })}
-                    onClick={() => handleDayClick(day)}
+                    className={className}
                     disabled={isDisabled}
-                    tabIndex={day.isSame(focusedDate, "day") ? 0 : -1}
                     aria-selected={!!isSelected}
+                    tabIndex={day.isSame(focusedDate, "day") ? 0 : -1}
+                    onClick={() => handleDayClick(day)}
                 >
                     {renderedDay}
                 </button>

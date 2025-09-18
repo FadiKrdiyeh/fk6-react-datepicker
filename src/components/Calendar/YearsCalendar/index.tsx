@@ -1,5 +1,5 @@
 import moment, { type Moment } from 'moment-hijri';
-import { useMemo, type FC, type ReactNode } from 'react';
+import { useMemo, type FC, type HTMLAttributes, type ReactNode } from 'react';
 
 import { extractTimeParts, getLocalizedMomentDate } from '../../../utils/dateHelpers.js';
 import { CalendarsEnum, CalendarViewsEnum, GregorianFormatsEnum, HijriFormatsEnum } from '../../../utils/enums.js';
@@ -17,7 +17,7 @@ interface AllYearsCalendarProps {
     locale?: string | undefined;
     disableLocaleDigits?: boolean | undefined;
     disabledDatesFn?: ((date: Date, view: `${CalendarViewsEnum}`) => boolean) | undefined; // mark specific dates disabled
-    renderYear?: (renderedValue: string, date: Date, options: { selected: boolean, disabled: boolean, today: boolean, focused: boolean, onClick: () => void }) => ReactNode; // custom renderer for day cells
+    renderYear?: (renderedValue: string, date: Date, props: HTMLAttributes<any>, state: { selected: boolean, disabled: boolean, today: boolean, focused: boolean }) => ReactNode; // custom renderer for day cells
     onSelect?: (date: Date) => void;
 }
 
@@ -89,23 +89,24 @@ export const YearsCalendar: FC<AllYearsCalendarProps> = ({
         const isFocused = year.isSame(focusedDate, "day");
 
         const renderedYear = disableLocaleDigits ? (isHijri ? year.iYear().toString() : year.year().toString()) : year.format(formats.FullYear);
+        const className = clsx({
+            "fkdp-calendar__cell": true,
+            "fkdp-calendar__cell--selected": isSelected,
+            "fkdp-calendar__cell--disabled": isDisabled,
+            "fkdp-calendar__cell--today": isToday,
+            "fkdp-calendar__cell--focused": isFocused,
+        });
 
         return (
-            !!renderYear ? renderYear(renderedYear, year.toDate(), { selected: isSelected, disabled: isDisabled, today: isToday, focused: isFocused, onClick: () => handleYearClick(year) }) : (
+            !!renderYear ? renderYear(renderedYear, year.toDate(), { className, "aria-selected": !!isSelected, tabIndex: year.isSame(focusedDate, "day") ? 0 : -1, onClick: () => handleYearClick(year) }, { selected: isSelected, disabled: isDisabled, today: isToday, focused: isFocused }) : (
                 <button
                     key={year.toString()}
                     type="button"
-                    className={clsx({
-                        "fkdp-calendar__cell": true,
-                        "fkdp-calendar__cell--selected": isSelected,
-                        "fkdp-calendar__cell--disabled": isDisabled,
-                        "fkdp-calendar__cell--today": isToday,
-                        "fkdp-calendar__cell--focused": isFocused,
-                    })}
-                    onClick={() => handleYearClick(year)}
+                    className={className}
                     disabled={isDisabled}
-                    tabIndex={year.isSame(focusedDate, "day") ? 0 : -1}
                     aria-selected={!!isSelected}
+                    tabIndex={year.isSame(focusedDate, "day") ? 0 : -1}
+                    onClick={() => handleYearClick(year)}
                 >
                     {renderedYear}
                 </button>

@@ -7,7 +7,8 @@
 
     &__input {
         flex: 1;
-        padding: 0.5rem 2rem 0.5rem 0.5rem;
+        padding: 0.5rem;
+        padding-inline-end: 2rem;
         border: 1px solid var(--fkdp-secondary);
         border-radius: 6px;
         background-color: var(--fkdp-field-bg);

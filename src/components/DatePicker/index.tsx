@@ -28,7 +28,7 @@ export interface DatePickerProps extends Omit<ComponentProps<'div'>, 'defaultVal
 	calendar?: `${CalendarsEnum}`;
 	initialDate?: Date | Moment;
 	theme?: `${ThemesEnum}`;
-	calendarProps?: Partial<CalendarProps>;
+	calendarProps?: Partial<Omit<CalendarProps, "timePickerProps">>;
 	fieldProps?: Partial<DateFieldProps>;
 	renderInput?: (dateFieldProps: DateFieldExtraProps) => React.ReactNode;
 	renderCalendar?: (props: CalendarProps) => React.ReactNode;
