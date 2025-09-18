@@ -1,11 +1,12 @@
 import moment, { type Moment } from 'moment-hijri';
-import { useMemo, type FC } from 'react';
+import { useMemo, type FC, type ReactNode } from 'react';
 
 import type { TimeParts } from '../../../types/time-parts.js';
 import { buildDateTime, extractTimeParts } from '../../../utils/dateHelpers.js';
 import { ScrollColumn } from './ScrollColumn/index.js';
 
 interface AllTimePickerProps {
+    label?: ReactNode;
     value?: Date | Moment | null;
     initialDate?: Date | Moment | null | undefined;
     currentDate: Moment;
@@ -19,12 +20,14 @@ interface AllTimePickerProps {
     disabledSeconds?: number[];
     disabledMeridiem?: string[];
     disableLocaleDigits?: boolean | undefined;
+    renderItem?: (renderedValue: string, item: number | string, options: { selected: boolean, disabled: boolean, onClick: () => void }) => ReactNode;
     onSelect?: (date: Date | null) => void;
 }
 
 export type TimePickerProps = Omit<AllTimePickerProps, "value" | "locale" | "disableLocaleDigits" | "currentDate">
 
 export const TimePicker: FC<AllTimePickerProps> = ({
+    label,
     value,
     initialDate,
     currentDate,
@@ -38,6 +41,7 @@ export const TimePicker: FC<AllTimePickerProps> = ({
     disabledSeconds,
     disabledMeridiem,
     disableLocaleDigits,
+    renderItem,
     onSelect,
 }) => {
     const isHoursVisible = visibleColumns === undefined || visibleColumns.includes('hours');
@@ -72,54 +76,61 @@ export const TimePicker: FC<AllTimePickerProps> = ({
     };
 
     return (
-        <div className="fkdp-calendar-time">
-            {isHoursVisible && (
-                <ScrollColumn
-                    locale={locale}
-                    items={hours}
-                    selected={valueTimeParts?.hour}
-                    disabledItems={disabledHours}
-                    showScrollbars={showScrollbars}
-                    selectOnScrolling={selectOnScrolling}
-                    disableLocaleDigits={disableLocaleDigits}
-                    onSelect={(h) => handleChangeTime({ ...(valueTimeParts ?? defaultValue), hour: h })}
-                />
-            )}
-            {isMinutesVisible && (
-                <ScrollColumn
-                    locale={locale}
-                    items={minutes}
-                    disabledItems={disabledMinutes}
-                    selected={valueTimeParts?.minute}
-                    showScrollbars={showScrollbars}
-                    selectOnScrolling={selectOnScrolling}
-                    disableLocaleDigits={disableLocaleDigits}
-                    onSelect={(m) => handleChangeTime({ ...(valueTimeParts ?? defaultValue), minute: m })}
-                />
-            )}
-            {isSecondsVisible && (
-                <ScrollColumn
-                    locale={locale}
-                    items={seconds}
-                    disabledItems={disabledSeconds}
-                    selected={valueTimeParts?.second}
-                    showScrollbars={showScrollbars}
-                    selectOnScrolling={selectOnScrolling}
-                    disableLocaleDigits={disableLocaleDigits}
-                    onSelect={(s) => handleChangeTime({ ...(valueTimeParts ?? defaultValue), second: s })}
-                />
-            )}
-            {(is12h && isSecondsVisible) && (
-                <ScrollColumn
-                    locale={locale}
-                    items={meridiem}
-                    showScrollbars={false}
-                    disabledItems={disabledMeridiem?.map(m => m.toLowerCase() === 'pm' || m.toLowerCase() === 'م' ? moment.localeData(locale).meridiem(12, 0, false) : moment.localeData(locale).meridiem(0, 0, false))}
-                    selectOnScrolling={selectOnScrolling}
-                    selected={valueTimeParts?.meridiem}
-                    onSelect={(ampm) => handleChangeTime({ ...(valueTimeParts ?? defaultValue), meridiem: ampm })}
-                />
-            )}
+        <div>
+            {label}
+            <div className="fkdp-calendar__time">
+                {isHoursVisible && (
+                    <ScrollColumn
+                        locale={locale}
+                        items={hours}
+                        selected={valueTimeParts?.hour}
+                        disabledItems={disabledHours}
+                        showScrollbars={showScrollbars}
+                        selectOnScrolling={selectOnScrolling}
+                        disableLocaleDigits={disableLocaleDigits}
+                        renderItem={renderItem}
+                        onSelect={(h) => handleChangeTime({ ...(valueTimeParts ?? defaultValue), hour: h })}
+                    />
+                )}
+                {isMinutesVisible && (
+                    <ScrollColumn
+                        locale={locale}
+                        items={minutes}
+                        disabledItems={disabledMinutes}
+                        selected={valueTimeParts?.minute}
+                        showScrollbars={showScrollbars}
+                        selectOnScrolling={selectOnScrolling}
+                        disableLocaleDigits={disableLocaleDigits}
+                        renderItem={renderItem}
+                        onSelect={(m) => handleChangeTime({ ...(valueTimeParts ?? defaultValue), minute: m })}
+                    />
+                )}
+                {isSecondsVisible && (
+                    <ScrollColumn
+                        locale={locale}
+                        items={seconds}
+                        disabledItems={disabledSeconds}
+                        selected={valueTimeParts?.second}
+                        showScrollbars={showScrollbars}
+                        selectOnScrolling={selectOnScrolling}
+                        disableLocaleDigits={disableLocaleDigits}
+                        renderItem={renderItem}
+                        onSelect={(s) => handleChangeTime({ ...(valueTimeParts ?? defaultValue), second: s })}
+                    />
+                )}
+                {(is12h && isSecondsVisible) && (
+                    <ScrollColumn
+                        locale={locale}
+                        items={meridiem}
+                        showScrollbars={false}
+                        disabledItems={disabledMeridiem?.map(m => m.toLowerCase() === 'pm' || m.toLowerCase() === 'م' ? moment.localeData(locale).meridiem(12, 0, false) : moment.localeData(locale).meridiem(0, 0, false))}
+                        selectOnScrolling={selectOnScrolling}
+                        selected={valueTimeParts?.meridiem}
+                        renderItem={renderItem}
+                        onSelect={(ampm) => handleChangeTime({ ...(valueTimeParts ?? defaultValue), meridiem: ampm })}
+                    />
+                )}
+            </div>
         </div>
     )
 }

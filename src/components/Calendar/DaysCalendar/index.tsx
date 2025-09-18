@@ -171,7 +171,7 @@ export const DaysCalendar: FC<AllDaysCalendarProps> = ({
         );
     };
 
-    const renderWeekDay = (weekDay: string) => {
+    const renderWeekDayCell = (weekDay: string) => {
         return (
             <span
                 key={weekDay}
@@ -185,7 +185,7 @@ export const DaysCalendar: FC<AllDaysCalendarProps> = ({
     return (
         <div>
             <div className={clsx({ "fkdp-calendar__grid": true, "fkdp-calendar__grid-weekdays": true, "fkdp-calendar__grid-with-weeknum": !!showWeeksNumber })}>
-                {weekDays.map((day) => renderWeekDay(day))}
+                {weekDays.map((day) => renderWeekDayCell(day))}
             </div>
 
             <div className={clsx({ "fkdp-calendar__grid": true, "fkdp-calendar__grid-days": true, "fkdp-calendar__grid-with-weeknum": !!showWeeksNumber })}>

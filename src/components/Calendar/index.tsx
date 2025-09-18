@@ -324,7 +324,7 @@ export const Calendar = forwardRef<HTMLDivElement, AllCalendarProps>(({
                 onCurrentDateChange={handleSetCurrentDate}
             />
 
-            <div style={{ display: 'flex' }}>
+            <div className="fkdp-calendar__container">
                 {renderedView()}
                 {showTimePicker && (
                     <>

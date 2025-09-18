@@ -83,12 +83,13 @@ export const ScrollColumn: FC<ScrollColumnProps> = ({
                 <button
                     key={item.toString()}
                     className={clsx({
-                        "fkdp-calendar-time__item": true,
-                        "fkdp-calendar-time__item--selected": isSelected,
-                        "fkdp-calendar-time__item--disabled": isDisabled,
+                        "fkdp-calendar__time-item": true,
+                        "fkdp-calendar__time-item--selected": isSelected,
+                        "fkdp-calendar__time-item--disabled": isDisabled,
                     })}
                     disabled={disabledItems?.includes(item)}
-                    style={{ height: ITEM_HEIGHT, width: typeof item === 'string' ? '100%' : undefined }}
+                    // style={{ height: ITEM_HEIGHT, width: typeof item === 'string' ? '100%' : undefined }}
+                    style={{ height: ITEM_HEIGHT, width: '100%' }}
                     onClick={() => onSelect(item)}
                 >
                     {renderedItem}
@@ -100,7 +101,7 @@ export const ScrollColumn: FC<ScrollColumnProps> = ({
     return (
         <div
             ref={scrollRef}
-            className="fkdp-calendar-time__col"
+            className="fkdp-calendar__time-col"
             style={{
                 height: CONTAINER_HEIGHT,
                 minWidth: ITEM_WIDTH,

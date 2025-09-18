@@ -29,6 +29,11 @@
         border-bottom: var(--fkdp-secondary) 1px solid;
     }
 
+    &__container {
+        display: flex;
+        direction: ltr !important;
+    }
+
     &__btn {
         background: transparent;
         border: none;
@@ -36,7 +41,7 @@
         border-radius: 50%;
         font-size: 16px;
         cursor: pointer;
-        transition: transform 0.2s ease-in-out;
+        transition: scale 0.2s ease-in-out;
         color: var(--fkdp-text);
 
         // &:hover {
@@ -45,7 +50,8 @@
 
         &:active {
             // background: #d0d0d0;
-            transform: scale(0.95);
+            scale: 0.95;
+            // transform: scale(0.95);
         }
 
         &--disabled {
@@ -115,13 +121,14 @@
         background-color: var(--fkdp-secondary);
     }
 
-    &-time {
+    &__time {
         display: flex;
         gap: 8px;
         margin-inline-start: 5px;
         position: relative;
+        direction: ltr !important;
 
-        &__col {
+        &-col {
             -ms-overflow-style: none;
             overflow-y: auto;
             scroll-snap-type: y mandatory;
@@ -142,7 +149,7 @@
             }
         }
 
-        &__item {
+        &-item {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -154,6 +161,7 @@
             transition: opacity 0.2s, font-weight 0.2s;
             background-color: var(--fkdp-calendar-bg);
             border: none;
+            color: var(--fkdp-text);
 
             &--selected {
                 font-weight: bold;
