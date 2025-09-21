@@ -1,4 +1,4 @@
-import moment, { isMoment, max, type Moment } from "moment-hijri"
+import moment, { type Moment } from "moment-hijri"
 
 import { MAX_SUPPORTED_DATE, MIN_SUPPORTED_DATE, MOMENT_MAX_SUPPORTED_DATE, MOMENT_MIN_SUPPORTED_DATE } from "../utils/constants.js"
 
