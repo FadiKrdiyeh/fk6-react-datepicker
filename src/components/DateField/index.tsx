@@ -91,15 +91,20 @@ export const DateField = forwardRef<HTMLInputElement, DateFieldInputExtraProps>(
             return;
         }
 
-        const parsed = moment(raw, format, true).locale(locale ?? "en"); // strict parse
-        if (parsed.isValid()) {
-            const newDate = parsed.toDate();
-            if (isControlled) {
-                onChange?.(newDate);
-            } else {
-                setInternalDate(newDate);
-                onChange?.(newDate);
+        try {
+            const parsed = moment(raw, format, true).locale(locale ?? "en"); // strict parse
+
+            if (parsed.isValid()) {
+                const newDate = parsed.toDate();
+                if (isControlled) {
+                    onChange?.(newDate);
+                } else {
+                    setInternalDate(newDate);
+                    onChange?.(newDate);
+                }
             }
+        } catch (error) {
+            return;
         }
     };
 
