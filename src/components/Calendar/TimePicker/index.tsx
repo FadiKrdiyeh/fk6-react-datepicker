@@ -6,7 +6,7 @@ import { buildDateTime, extractTimeParts } from '../../../utils/dateHelpers.js';
 import { ScrollColumn } from './ScrollColumn/index.js';
 
 interface AllTimePickerProps {
-    label?: ReactNode;
+    header?: ReactNode;
     value?: Date | Moment | null;
     initialDate?: Date | Moment | null | undefined;
     currentDate: Moment;
@@ -27,7 +27,7 @@ interface AllTimePickerProps {
 export type TimePickerProps = Omit<AllTimePickerProps, "value" | "locale" | "disableLocaleDigits" | "currentDate">
 
 export const TimePicker: FC<AllTimePickerProps> = ({
-    label,
+    header,
     value,
     initialDate,
     currentDate,
@@ -76,8 +76,30 @@ export const TimePicker: FC<AllTimePickerProps> = ({
     };
 
     return (
-        <div>
-            {label}
+        <div style={{ position: 'relative', direction: 'ltr' }}>
+            {!!header ? header : (
+                <div className='fkdp-calendar__time-header'>
+                    <div
+                        className="fkdp-calendar__time-item"
+                        style={{ width: '100%' }}
+                    >
+                        h
+                    </div>
+                    <div
+                        className="fkdp-calendar__time-item"
+                        style={{ width: '100%' }}
+                    >
+                        m
+                    </div>
+                    <div
+                        className="fkdp-calendar__time-item"
+                        style={{ width: '100%' }}
+                    >
+                        s
+                    </div>
+                    {is12h && (<div className="fkdp-calendar__time-item" style={{ width: '100%' }}></div>)}
+                </div>
+            )}
             <div className="fkdp-calendar__time">
                 {isHoursVisible && (
                     <ScrollColumn

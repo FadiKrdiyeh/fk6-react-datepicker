@@ -31,7 +31,6 @@
 
     &__container {
         display: flex;
-        direction: ltr !important;
     }
 
     &__btn {
@@ -116,7 +115,7 @@
     }
 
     &__divider {
-        margin-inline-start: 5px;
+        margin-inline: 5px;
         width: 1px;
         background-color: var(--fkdp-secondary);
     }
@@ -124,9 +123,22 @@
     &__time {
         display: flex;
         gap: 8px;
-        margin-inline-start: 5px;
+        margin-inline: 5px;
         position: relative;
         direction: ltr !important;
+
+        &-header {
+            display: flex;
+            position: absolute;
+            width: 100%;
+            background-color: var(--fkdp-calendar-bg);
+            
+            .fkdp-calendar__time-item {
+                color: var(--fkdp-text);
+                opacity: 1;
+                z-index: 99;
+            }
+        }
 
         &-col {
             -ms-overflow-style: none;
@@ -150,6 +162,7 @@
         }
 
         &-item {
+            padding: 5px;
             display: flex;
             justify-content: center;
             align-items: center;

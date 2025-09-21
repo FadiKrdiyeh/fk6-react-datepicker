@@ -43,7 +43,7 @@ Whether you’re building a simple form date field or a complex internationalize
 - **🖼 Inline or Popover Mode** - Use the calendar embedded in your layout or as a dropdown attached to an input field.
 
 - **⚡ Simple API** - Minimal props with sensible defaults, but flexible enough for advanced use cases.
-- 🛠️ Written in **TypeScript** with full typings -
+- 🛠️ Written in **TypeScript** with full typings
 
 ---
 
@@ -140,8 +140,6 @@ import { DatePicker } from "@fk6/react-datepicker";
 
 import "@fk6/react-datepicker/react-datepicker.css";
 import "moment/locale/ar";
-
-moment.locale("ar");
 
 const Example = () => {
   return <DatePicker locale="ar" />;
@@ -349,19 +347,20 @@ You can override CSS variables in your styles:
 
 ## Time Picker Props
 
-| Prop                | Type                                                                                                                                        | Default | Description                                                                                                                   |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `is12h`             | `boolean`                                                                                                                                   | —       | Toggles between 12-hour (AM/PM) and 24-hour time formats; set to true for 12-hour display.                                    |
-| `showScrollbars`    | `boolean`                                                                                                                                   | —       | Determines visibility of scrollbars for hours, minutes, and second.                                                           |
-| `selectOnScrolling` | `boolean`                                                                                                                                   | —       | Automatically selects the middle value while scrolling hours, minutes, seconds, or meridiem for smoother interaction.         |
-| `visibleColumns`    | `('hours' \| 'minutes' \| 'seconds')[]`                                                                                                     | —       | Specifies which time units to display in the picker; choose any combination of 'hours', 'minutes', and 'seconds'.             |
-| `disabledHours`     | `number[]`                                                                                                                                  | —       | An array of hour values (0–23) that are disabled in the picker, preventing selection of those times.                          |
-| `disabledMinutes`   | `number[]`                                                                                                                                  | —       | An array of minutes values (0–59) that are disabled in the picker, preventing selection of those times.                       |
-| `disabledSeconds`   | `number[]`                                                                                                                                  | —       | An array of seconds values (0–59) that are disabled in the picker, preventing selection of those times.                       |
-| `disabledMeridiem`  | `string[]`                                                                                                                                  | —       | An array of meridiem values (AM - am - ص - PM - pm - م) that are disabled in the picker, preventing selection of those times. |
+| Prop                | Type                                                                                                                                        | Default | Description                                                                                                                                     |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `is12h`             | `boolean`                                                                                                                                   | —       | Toggles between 12-hour (AM/PM) and 24-hour time formats; set to true for 12-hour display.                                                      |
+| `showScrollbars`    | `boolean`                                                                                                                                   | —       | Determines visibility of scrollbars for hours, minutes, and second.                                                                             |
+| `selectOnScrolling` | `boolean`                                                                                                                                   | —       | Automatically selects the middle value while scrolling hours, minutes, seconds, or meridiem for smoother interaction.                           |
+| `visibleColumns`    | `('hours' \| 'minutes' \| 'seconds')[]`                                                                                                     | —       | Specifies which time units to display in the picker; choose any combination of 'hours', 'minutes', and 'seconds'.                               |
+| `disabledHours`     | `number[]`                                                                                                                                  | —       | An array of hour values (0–23) that are disabled in the picker, preventing selection of those times.                                            |
+| `disabledMinutes`   | `number[]`                                                                                                                                  | —       | An array of minutes values (0–59) that are disabled in the picker, preventing selection of those times.                                         |
+| `disabledSeconds`   | `number[]`                                                                                                                                  | —       | An array of seconds values (0–59) that are disabled in the picker, preventing selection of those times.                                         |
+| `disabledMeridiem`  | `string[]`                                                                                                                                  | —       | An array of meridiem values (AM - am - ص - PM - pm - م) that are disabled in the picker, preventing selection of those times.                   |
+| `header`            | `ReactNode`                                                                                                                                 | —       | Custom content to render above the time picker panel (hours, minutes, seconds). Useful for adding titles, instructions, or additional controls. |
 | .                   |
-| `renderTimeItem`        | `(renderedValue: string, item: number \| string, props: HTMLAttributes<any>, state: { selected: boolean, disabled: boolean }) => ReactNode` | —       | A function that returns a custom element for each hour, minute, second and meridiem cell in the timepicker.                   |
-| `onSelect`          | `(date: Date) => void`                                                                                                                      | —       | Called when a user clicks an hour, minute, second, or meridiem; receives the clicked date as a Date object.                   |
+| `renderTimeItem`    | `(renderedValue: string, item: number \| string, props: HTMLAttributes<any>, state: { selected: boolean, disabled: boolean }) => ReactNode` | —       | A function that returns a custom element for each hour, minute, second and meridiem cell in the timepicker.                                     |
+| `onSelect`          | `(date: Date) => void`                                                                                                                      | —       | Called when a user clicks an hour, minute, second, or meridiem; receives the clicked date as a Date object.                                     |
 
 ---
 

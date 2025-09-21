@@ -100,24 +100,24 @@ export const ScrollColumn: FC<ScrollColumnProps> = ({
         )
     }
 
-return (
-    <div
-        ref={scrollRef}
-        className="fkdp-calendar__time-col"
-        style={{
-            height: CONTAINER_HEIGHT,
-            minWidth: ITEM_WIDTH,
-            scrollbarWidth: showScrollbars ? 'thin' : 'none',
-        }}
-        onScroll={selectOnScrolling ? handleScroll : undefined}
-    >
-        {/* Top padding */}
-        <div style={{ height: ITEM_HEIGHT * MIDDLE_INDEX }} />
+    return (
+        <div
+            ref={scrollRef}
+            className="fkdp-calendar__time-col"
+            style={{
+                height: CONTAINER_HEIGHT,
+                minWidth: ITEM_WIDTH,
+                scrollbarWidth: showScrollbars ? 'thin' : 'none',
+            }}
+            onScroll={selectOnScrolling ? handleScroll : undefined}
+        >
+            {/* Top padding */}
+            <div style={{ height: ITEM_HEIGHT * MIDDLE_INDEX }} />
 
-        {items.map((item) => renderCell(item))}
+            {items.map((item) => renderCell(item))}
 
-        {/* Bottom padding */}
-        <div style={{ height: ITEM_HEIGHT * MIDDLE_INDEX }} />
-    </div>
-);
+            {/* Bottom padding */}
+            <div style={{ height: ITEM_HEIGHT * MIDDLE_INDEX }} />
+        </div>
+    );
 }
