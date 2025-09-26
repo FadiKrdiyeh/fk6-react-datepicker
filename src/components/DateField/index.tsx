@@ -54,7 +54,7 @@ export const DateField = forwardRef<HTMLInputElement, DateFieldInputExtraProps>(
 
         return formattedStr;
     }
-    
+
     const [inputValue, setInputValue] = useState<string>(
         (isControlled ? value : internalDate)
             ? test(isControlled ? value : internalDate)
@@ -157,7 +157,6 @@ export const DateField = forwardRef<HTMLInputElement, DateFieldInputExtraProps>(
             <input
                 ref={inputRef}
                 type="text"
-                className="fkdp-field__input"
                 value={inputValue}
                 onChange={handleInputChange}
                 onBlur={handleBlur}
@@ -170,6 +169,7 @@ export const DateField = forwardRef<HTMLInputElement, DateFieldInputExtraProps>(
                 aria-haspopup="dialog"
                 id="RDP_Field"
                 {...inputProps}
+                className="fkdp-field__input"
                 readOnly
             />
 
