@@ -1,5 +1,5 @@
 import moment, { type Moment } from 'moment-hijri';
-import React, { forwardRef, useEffect, useRef, useState, type ComponentProps, type MouseEvent, type ReactNode, type Ref } from 'react';
+import React, { forwardRef, useEffect, useRef, useState, type ComponentProps, type HTMLAttributes, type InputHTMLAttributes, type MouseEvent, type ReactNode, type Ref } from 'react';
 
 import { getLocalizedMomentDate } from '../../utils/dateHelpers.js';
 import { GregorianFormatsEnum } from '../../utils/enums.js';
@@ -19,6 +19,7 @@ export interface DateFieldExtraProps {
     readOnly?: boolean;
     placeholder?: string | undefined;
     disableLocaleDigits?: boolean | undefined;
+    htmlInputProps?: InputHTMLAttributes<HTMLInputElement>;
     renderIcon?: (onClick: () => void) => ReactNode;
     onChange?: (date: Date | null) => void;
     onInputChange?: (raw: string) => void;
@@ -41,6 +42,7 @@ export const DateField = forwardRef<HTMLInputElement, DateFieldInputExtraProps>(
     onChange,
     onInputChange,
     onOpenRequest,
+    htmlInputProps,
     ...inputProps
 }, ref) => {
     const isControlled = value !== undefined;
@@ -147,6 +149,7 @@ export const DateField = forwardRef<HTMLInputElement, DateFieldInputExtraProps>(
 
     return (
         <div
+            {...inputProps}
             className={clsx({
                 "fkdp-field": true,
                 [inputProps.className || '']: !!inputProps.className,
@@ -168,7 +171,7 @@ export const DateField = forwardRef<HTMLInputElement, DateFieldInputExtraProps>(
                 }}
                 aria-haspopup="dialog"
                 id="RDP_Field"
-                {...inputProps}
+                {...htmlInputProps}
                 className="fkdp-field__input"
                 readOnly
             />
