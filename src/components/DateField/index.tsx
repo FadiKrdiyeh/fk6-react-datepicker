@@ -172,7 +172,11 @@ export const DateField = forwardRef<HTMLInputElement, DateFieldInputExtraProps>(
                 aria-haspopup="dialog"
                 id="RDP_Field"
                 {...htmlInputProps}
-                className="fkdp-field__input"
+                className={clsx({
+                    "fkdp-field__input": true,
+                    [htmlInputProps?.className || ""]: !!htmlInputProps?.className,
+                })}
+                // className="fkdp-field__input"
                 readOnly
             />
 
