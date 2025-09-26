@@ -1,5 +1,5 @@
 import type { Moment } from "moment-hijri";
-import React, { forwardRef, useRef, useState, type ComponentProps } from "react";
+import React, { forwardRef, useEffect, useRef, useState, type ComponentProps } from "react";
 
 import { useHandleMinMaxDates } from "../../hooks/useHandleMinMaxDates.js";
 import { MOMENT_MAX_SUPPORTED_DATE, MOMENT_MIN_SUPPORTED_DATE } from "../../utils/constants.js";
@@ -15,7 +15,6 @@ export interface DatePickerProps extends Omit<ComponentProps<'div'>, 'defaultVal
 	value?: Date | Moment | null;              // controlled selected date
 	defaultValue?: Date | Moment | null;       // uncontrolled
 	open?: boolean;                   // controlled open state
-	defaultOpen?: boolean;            // uncontrolled
 	format?: string;                  // date format for input
 	placeholder?: string;
 	minDate?: Date | Moment;
@@ -40,7 +39,6 @@ export const DatePicker: React.FC<DatePickerProps> = forwardRef(({
 	value,
 	defaultValue = null,
 	open,
-	defaultOpen = false,
 	format,
 	placeholder,
 	minDate: _minDate,
@@ -77,6 +75,14 @@ export const DatePicker: React.FC<DatePickerProps> = forwardRef(({
 
 	const selectedDate = isControlledValue ? value : internalValue;
 	const isOpen = isControlledOpen ? open : !!anchorEl;
+
+	useEffect(() => {
+		if (isControlledOpen)
+			if (open)
+				setAnchorEl(fieldRef.current);
+			else
+				setAnchorEl(null);
+	}, [open]);
 
 	// Handle open state
 	const handleOpen = (state: boolean) => {
