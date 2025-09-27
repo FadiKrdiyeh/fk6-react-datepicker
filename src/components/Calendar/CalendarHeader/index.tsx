@@ -120,6 +120,9 @@ export const CalendarHeader: FC<CalendarHeaderProps> = ({
     const currentYear = useMemo(() => disableLocaleDigits ? (isHijri ? currentDate.iYear().toString() : currentDate.year().toString()) : currentDate.format(formats.FullYear), [currentDate, isHijri]);
     const currentMonth = useMemo(() => currentDate.format(formats.FullMonth), [currentDate]);
 
+    if (views?.length === 1 && views[0] === CalendarViewsEnum.Days)
+        return null;
+
     return (
         <div className="fkdp-calendar__header">
             {!!renderPrevButton ? renderPrevButton({ disabled: !isPrevButtonEnabled, onClick: () => handlePrevPage() }) : (
