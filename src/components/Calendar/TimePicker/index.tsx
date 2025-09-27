@@ -1,5 +1,5 @@
 import moment, { type Moment } from 'moment-hijri';
-import { useMemo, type ComponentProps, type FC, type HTMLAttributes, type ReactNode } from 'react';
+import { useMemo, type FC, type HTMLAttributes, type ReactNode } from 'react';
 
 import type { TimeParts } from '../../../types/time-parts.js';
 import { buildDateTime, extractTimeParts } from '../../../utils/dateHelpers.js';
