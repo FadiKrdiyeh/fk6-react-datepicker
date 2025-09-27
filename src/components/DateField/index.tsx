@@ -155,7 +155,7 @@ export const DateField = forwardRef<HTMLInputElement, DateFieldInputExtraProps>(
             className={clsx({
                 "fkdp-field": true,
                 [inputProps.className || '']: !!inputProps.className,
-                "fkdp-field--disabled": inputProps.disabled,
+                "fkdp-field--disabled": disabled,
                 "fkdp-field--readonly": inputProps.readOnly,
             })}
         >
@@ -184,7 +184,7 @@ export const DateField = forwardRef<HTMLInputElement, DateFieldInputExtraProps>(
                 readOnly
             />
 
-            {(clearable && inputValue && !inputProps.disabled && !inputProps.readOnly) && (
+            {(clearable && inputValue && !disabled && !inputProps.readOnly) && (
                 <button
                     type="button"
                     className="fkdp-field__clear"
@@ -200,7 +200,7 @@ export const DateField = forwardRef<HTMLInputElement, DateFieldInputExtraProps>(
                     type="button"
                     className="fkdp-field__icon"
                     aria-label="Open calendar"
-                    disabled={inputProps.disabled}
+                    disabled={disabled}
                     onClick={() => onOpenRequest?.(inputRef.current)}
                 >
                     {!!renderIcon ? renderIcon(() => onOpenRequest?.(inputRef.current)) : '📅'}
