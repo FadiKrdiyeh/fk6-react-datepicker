@@ -38,11 +38,13 @@ export const DateField = forwardRef<HTMLInputElement, DateFieldInputExtraProps>(
     showIcon = true,
     locale,
     disableLocaleDigits,
+    htmlInputProps,
+    placeholder,
+    disabled,
     renderIcon,
     onChange,
     onInputChange,
     onOpenRequest,
-    htmlInputProps,
     ...inputProps
 }, ref) => {
     const isControlled = value !== undefined;
@@ -161,6 +163,8 @@ export const DateField = forwardRef<HTMLInputElement, DateFieldInputExtraProps>(
                 ref={inputRef}
                 type="text"
                 value={inputValue}
+                placeholder={placeholder}
+                disabled={disabled}
                 onChange={handleInputChange}
                 onBlur={handleBlur}
                 onKeyDown={handleKeyDown}
