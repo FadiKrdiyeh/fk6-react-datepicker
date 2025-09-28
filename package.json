@@ -1,6 +1,6 @@
 {
   "name": "@fk6/react-datepicker",
-  "version": "2.1.19",
+  "version": "2.1.20",
   "description": "React date picker with Hijri & Gregorian support, theming, localization, and more.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -75,5 +75,5 @@
   "bugs": {
     "url": "https://github.com/FadiKrdiyeh/fk6-react-datepicker/issues"
   },
-  "homepage": "https://github.com/FadiKrdiyeh/fk6-react-datepicker#readme"
+  "homepage": "https://fadikrdiyeh.github.io/fk6-react-datepicker-demo/"
 }

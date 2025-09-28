@@ -10,6 +10,8 @@ It provides multiple views (day, month, year), works in **inline** or **popover*
 
 Whether you’re building a simple form date field or a complex internationalized app, this library gives you full control over how dates are displayed, selected, highlighted, and styled.
 
+Check out the [Documentation](https://fadikrdiyeh.github.io/fk6-react-datepicker-demo/) or try it in the [Live Demo](https://fadikrdiyeh.github.io/fk6-react-datepicker-demo/examples)
+
 ---
 
 ## ✨ Features
