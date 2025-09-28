@@ -23,6 +23,7 @@ export default defineConfig({
         rollupOptions: {
             external: ["react", "react-dom", "moment", "moment-hijri"],
             output: {
+                exports: "named",
                 globals: {
                     react: "React",
                     "react-dom": "ReactDOM",
