@@ -1,3 +1,4 @@
+import { DatePicker } from "./components/DatePicker/index.js";
 export { DatePicker } from "./components/DatePicker/index.js";
 export { DateTimePicker } from './components/DateTimePicker/index.js'
 export { Calendar } from './components/Calendar/index.js';
@@ -11,3 +12,4 @@ export type { YearsCalendarProps } from './components/Calendar/YearsCalendar/ind
 export type { DateTimePickerProps } from './components/DateTimePicker/index.js'
 
 export * from './utils/enums.js';
+export default DatePicker;
