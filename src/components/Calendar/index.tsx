@@ -1,4 +1,4 @@
-import { type Moment } from "moment-hijri";
+import moment, { type Moment } from "moment-hijri";
 import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState, type ComponentProps, type CSSProperties, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 
@@ -92,8 +92,8 @@ export const Calendar = forwardRef<HTMLDivElement, AllCalendarProps>(({
 
     // const [isOpen, setIsOpen] = useState(mode === "inline");
     const [view, setView] = useState<`${CalendarViewsEnum}`>(initialView ?? views?.[0] ?? CalendarViewsEnum.Days);
-    const [currentDate, setCurrentDate] = useState(getLocalizedMomentDate(fixSupportedDate(value || initialDate || new Date(), locale), locale));
-    const [focusedDate, setFocusedDate] = useState(getLocalizedMomentDate(fixSupportedDate(value || new Date(), locale), locale));
+    const [currentDate, setCurrentDate] = useState(getLocalizedMomentDate(fixSupportedDate(value || initialDate || moment({ hours: 0, minutes: 0, seconds: 0 }), locale), locale));
+    const [focusedDate, setFocusedDate] = useState(getLocalizedMomentDate(fixSupportedDate(value || moment({ hours: 0, minutes: 0, seconds: 0 }), locale), locale));
     const [styles, setStyles] = useState<CSSProperties>({ visibility: 'hidden' });
 
     const calendarRef = useRef<HTMLDivElement>(null);
